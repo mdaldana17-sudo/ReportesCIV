@@ -4,7 +4,6 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>ControlHub</title>
-<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 <style>
 *,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
 :root{
@@ -57,13 +56,6 @@ main{padding:24px 28px;max-width:1500px;margin:0 auto}
 .pane{display:none}
 .pane.active{display:block;animation:fadeUp .25s ease}
 @keyframes fadeUp{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:translateY(0)}}
-
-/* SECCIÓN DE GRÁFICAS */
-.charts-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(280px,1fr));gap:16px;margin-bottom:20px}
-.chart-card{background:var(--surface);border:1px solid var(--border);border-radius:12px;padding:14px;box-shadow:var(--sh0)}
-.chart-card h4{font-size:12px;color:var(--text);margin-bottom:10px;display:flex;justify-content:space-between;align-items:center;font-weight:700;text-transform:uppercase;letter-spacing:.03em}
-.chart-container{position:relative;height:160px;width:100%}
-.chart-filter-badge{font-size:10px;background:var(--accent-lt);color:var(--accent);padding:2px 8px;border-radius:12px;cursor:pointer;font-weight:600}
 
 /* TOOLBAR */
 .toolbar{display:flex;align-items:center;justify-content:space-between;margin-bottom:18px;flex-wrap:wrap;gap:10px}
@@ -235,6 +227,7 @@ main{padding:24px 28px;max-width:1500px;margin:0 auto}
 </head>
 <body>
 
+<!-- LOADING -->
 <div id="loading-screen">
   <div style="display:flex;align-items:center;gap:10px">
     <div style="width:32px;height:32px;background:linear-gradient(135deg,#5b6af0,#8b5cf6);border-radius:8px;display:flex;align-items:center;justify-content:center;color:#fff;font-weight:900;font-size:16px">C</div>
@@ -244,6 +237,7 @@ main{padding:24px 28px;max-width:1500px;margin:0 auto}
   <p style="font-size:13px;color:var(--muted)">Conectando con Firebase...</p>
 </div>
 
+<!-- HEADER -->
 <header>
   <div class="logo">
     <div class="logo-mark">C</div>
@@ -255,6 +249,7 @@ main{padding:24px 28px;max-width:1500px;margin:0 auto}
   </div>
 </header>
 
+<!-- TABS -->
 <div class="tabs-bar">
   <div class="tab active"       id="tab-rep" onclick="switchTab('rep')">📄 Reportes <span class="badge" id="bdg-rep">0</span></div>
   <div class="tab done-tab"     id="tab-rep-done" onclick="switchTab('rep-done')">✅ Reportes Completados <span class="badge" id="bdg-rep-done">0</span></div>
@@ -262,6 +257,7 @@ main{padding:24px 28px;max-width:1500px;margin:0 auto}
 </div>
 
 <main>
+  <!-- ── REPORTES ACTIVOS ── -->
   <div class="pane active" id="pane-rep">
     <div class="toolbar">
       <div class="tl-l">
@@ -282,35 +278,7 @@ main{padding:24px 28px;max-width:1500px;margin:0 auto}
         <button class="btn btn-primary" onclick="openForm('rep')">+ Nuevo Reporte</button>
       </div>
     </div>
-    
     <div class="stats-row" id="stats-rep"></div>
-
-    <div class="charts-grid">
-      <div class="chart-card">
-        <h4>
-          <div style="display:flex; align-items:center; gap:8px;">
-            <span>📅 Reportes por Mes</span>
-            <select id="flt-year" class="flt" style="padding:2px 6px; font-size:11px; height:auto; border-radius:6px;" onchange="window.onChangeYearFilter()">
-              <option value="2025">2025</option>
-              <option value="2026" selected>2026</option>
-              <option value="2027">2027</option>
-              <option value="2028">2028</option>
-            </select>
-          </div>
-          <span id="f-tag-month" class="chart-filter-badge" style="display:none" onclick="clearChartFilter('month')">✕ Limpiar</span>
-        </h4>
-        <div class="chart-container"><canvas id="c-months"></canvas></div>
-      </div>
-      <div class="chart-card">
-        <h4><span>📤 Enviados / Pendientes</span><span id="f-tag-sent" class="chart-filter-badge" style="display:none" onclick="clearChartFilter('sent')">✕ Limpiar</span></h4>
-        <div class="chart-container"><canvas id="c-sent"></canvas></div>
-      </div>
-      <div class="chart-card">
-        <h4><span>⚠ Con Retraso</span><span id="f-tag-delay" class="chart-filter-badge" style="display:none" onclick="clearChartFilter('delay')">✕ Limpiar</span></h4>
-        <div class="chart-container"><canvas id="c-delay"></canvas></div>
-      </div>
-    </div>
-
     <div class="bulk-bar" id="bulk-bar-rep">
       <span class="bulk-count" id="bulk-count-rep">0 seleccionados</span>
       <button class="btn btn-ghost btn-sm" onclick="selectAllRep()">☑ Seleccionar todos</button>
@@ -326,6 +294,7 @@ main{padding:24px 28px;max-width:1500px;margin:0 auto}
     </div>
   </div>
 
+  <!-- ── REPORTES COMPLETADOS ── -->
   <div class="pane" id="pane-rep-done">
     <div class="done-banner">
       <div class="done-banner-icon">🏆</div>
@@ -347,6 +316,7 @@ main{padding:24px 28px;max-width:1500px;margin:0 auto}
     </div>
   </div>
 
+  <!-- ── INTERVENCIONES ── -->
   <div class="pane" id="pane-int">
     <div class="toolbar">
       <div class="tl-l">
@@ -380,6 +350,7 @@ main{padding:24px 28px;max-width:1500px;margin:0 auto}
   </div>
 </main>
 
+<!-- FORM MODAL -->
 <div class="overlay" id="ov-form">
   <div class="modal">
     <div class="modal-head">
@@ -390,16 +361,21 @@ main{padding:24px 28px;max-width:1500px;margin:0 auto}
       <div class="fg form-full"><label>Nombre *</label><input type="text" id="f-nombre" placeholder="Nombre del reporte..."></div>
       <div class="fg form-full"><label>Descripción</label><textarea id="f-desc" placeholder="Detalle o contexto..."></textarea></div>
 
-      <div class="section-divider"><span>🏢 Identificadores y Estado</span></div>
+      <div class="section-divider"><span>📋 Clasificación</span></div>
+      <div class="fg"><label>ID de la Intervención</label><input type="text" id="f-id-intervencion" placeholder="Ej: INT-001, REP-045..."></div>
+      <div class="fg"><label>Tipo de Reporte</label><input type="text" id="f-tipo-reporte" placeholder="Ej: Mensual, Seguimiento..."></div>
+      <div class="fg form-full"><label>Categoría</label><input type="text" id="f-categoria" placeholder="Ej: Salud, Educación, Protección..."></div>
+
+      <div class="section-divider"><span>👤 Asignación y Estado</span></div>
       <div class="fg"><label>Responsable *</label><select id="f-responsable"><option value="">Seleccionar...</option></select></div>
       <div class="fg" id="f-tipo-wrap"><label>Tipo de intervención</label><select id="f-tipo"><option>Individual</option><option>Grupal</option><option>Familiar</option><option>Comunitaria</option><option>Seguimiento</option><option>Otro</option></select></div>
       <div class="fg"><label>Estado inicial</label><select id="f-estado"></select></div>
       <div class="fg"><label>Fecha Envío Connect</label><input type="date" id="f-fecha"></div>
-      
-      <div class="fg"><label>ID de Intervención</label><input type="text" id="f-id-intervencion" placeholder="Ej: INT-001..."></div>
-      <div class="fg"><label>Tipo de Reporte</label><input type="text" id="f-tipo-reporte" placeholder="Ej: Mensual, Trimestral..."></div>
-      <div class="fg form-full"><label>Categoría</label><input type="text" id="f-categoria" placeholder="Categoría del reporte..."></div>
 
+      <div class="section-divider"><span>📋 Clasificación del Reporte</span></div>
+      <div class="fg" id="f-id-wrap"><label>ID de la Intervención</label><input type="text" id="f-id-intervencion" placeholder="Ej: INT-001, R-2024-05..."></div>
+      <div class="fg" id="f-tipor-wrap"><label>Tipo de Reporte</label><input type="text" id="f-tipo-reporte" placeholder="Ej: Mensual, Trimestral..."></div>
+      <div class="fg form-full" id="f-cat-wrap"><label>Categoría</label><input type="text" id="f-categoria" placeholder="Ej: Salud, Educación, Nutrición..."></div>
       <div class="section-divider"><span>🏢 Datos del Implementador</span></div>
       <div class="fg"><label>Implementador Responsable</label><input type="text" id="f-implementador" placeholder="Nombre del implementador..."></div>
       <div class="fg"><label>Región</label><input type="text" id="f-region" placeholder="Ej: Región Central..."></div>
@@ -413,6 +389,7 @@ main{padding:24px 28px;max-width:1500px;margin:0 auto}
   </div>
 </div>
 
+<!-- DATE PROMPT MODAL -->
 <div class="overlay" id="ov-date">
   <div class="mini-modal">
     <div class="modal-head">
@@ -428,6 +405,7 @@ main{padding:24px 28px;max-width:1500px;margin:0 auto}
   </div>
 </div>
 
+<!-- STATE PICKER MODAL -->
 <div class="overlay" id="ov-state">
   <div class="mini-modal" style="width:430px">
     <div class="modal-head">
@@ -440,58 +418,70 @@ main{padding:24px 28px;max-width:1500px;margin:0 auto}
   </div>
 </div>
 
+<!-- SETTINGS MODAL -->
 <div class="overlay" id="ov-settings">
-  <div class="modal" style="width:460px">
+  <div class="modal" style="max-width:460px">
     <div class="modal-head">
-      <h2>👥 Configuración de Equipo</h2>
+      <h2>👥 Configurar equipo</h2>
       <button class="modal-close" onclick="closeOv('ov-settings')">✕</button>
     </div>
-    <p style="font-size:12.5px;color:var(--muted);margin-bottom:14px">Agrega o elimina los integrantes del equipo encargados de los reportes.</p>
-    <div style="display:flex;gap:8px;margin-bottom:16px">
-      <input type="text" id="new-member-name" placeholder="Nombre del nuevo integrante..." style="background:var(--surface2);border:1px solid var(--border2);border-radius:8px;padding:8px 12px;font-family:var(--font);font-size:13px;flex:1;outline:none">
-      <button class="btn btn-primary btn-sm" onclick="addTeamMember()">+ Añadir</button>
+    <p style="font-size:13px;color:var(--muted);margin-bottom:16px">Edita los nombres. Los cambios se sincronizan en tiempo real para todas.</p>
+    <div id="settings-members"></div>
+    <div style="margin-top:14px;padding-top:14px;border-top:1px solid var(--border)">
+      <p style="font-size:11px;font-weight:700;color:var(--muted);text-transform:uppercase;letter-spacing:.05em;margin-bottom:8px">Agregar miembro</p>
+      <div style="display:flex;gap:8px">
+        <input type="text" id="new-mem" placeholder="Nombre del nuevo miembro..." style="flex:1;background:var(--surface2);border:1px solid var(--border2);border-radius:8px;padding:8px 10px;font-family:var(--font);font-size:13px;color:var(--text);outline:none">
+        <button class="btn btn-primary btn-sm" onclick="addMember()">+ Agregar</button>
+      </div>
     </div>
-    <div id="settings-members-list" style="max-height:260px;overflow-y:auto;border:1px solid var(--border);border-radius:10px;padding:4px 12px;background:var(--surface2)"></div>
     <div class="modal-foot">
-      <button class="btn btn-primary" onclick="closeOv('ov-settings')">Listo</button>
+      <button class="btn btn-ghost" onclick="closeOv('ov-settings')">Cancelar</button>
+      <button class="btn btn-primary" onclick="saveSettings()">Guardar cambios</button>
     </div>
   </div>
 </div>
 
+<!-- EXCEL IMPORT MODAL -->
 <div class="overlay" id="ov-excel">
-  <div class="modal" style="width:750px">
+  <div class="modal" style="width:640px">
     <div class="modal-head">
       <h2>📊 Importar Reportes desde Excel</h2>
       <button class="modal-close" onclick="closeExcelImport()">✕</button>
     </div>
-    <div class="drop-zone" id="excel-drop">
-      <div class="drop-zone-icon">📥</div>
-      <p>Arrastra tu archivo Excel aquí o <strong>haz clic para buscarlo</strong></p>
-      <input type="file" id="excel-file" accept=".xlsx,.xls" style="display:none" onchange="handleExcelFile(e)">
-    </div>
-    
-    <div id="manual-col-selector" style="display:none;margin-top:14px;padding:12px;background:var(--surface2);border:1px solid var(--border);border-radius:8px">
-      <label style="font-size:11.5px;font-weight:700;color:var(--muted);display:block;margin-bottom:6px">⚠ NO SE DETECTÓ LA COLUMNA DE NOMBRE AUTOMÁTICAMENTE. SELECCIÓNALA MANUALMENTE:</label>
-      <div style="display:flex;gap:10px;align-items:center">
-        <select id="manual-nombre-col" class="flt" style="flex:1"><option value="">-- Seleccionar columna --</option></select>
-        <button class="btn btn-primary btn-sm" onclick="applyManualColumnMap()">Procesar filas</button>
-      </div>
+
+    <div style="background:#eff6ff;border:1px solid #bfdbfe;border-radius:10px;padding:14px 16px;margin-bottom:18px;font-size:12.5px;color:#1e40af;line-height:1.7">
+      <strong>📋 Columnas que lee tu Excel:</strong><br>
+      <code style="background:#dbeafe;padding:1px 5px;border-radius:4px;font-size:11px">ID de la intervención</code>
+      <code style="background:#dbeafe;padding:1px 5px;border-radius:4px;font-size:11px">Nombre</code>
+      <code style="background:#dbeafe;padding:1px 5px;border-radius:4px;font-size:11px">Tipo de reporte</code>
+      <code style="background:#dbeafe;padding:1px 5px;border-radius:4px;font-size:11px">Estados</code>
+      <code style="background:#dbeafe;padding:1px 5px;border-radius:4px;font-size:11px">Fecha</code>
+      <code style="background:#dbeafe;padding:1px 5px;border-radius:4px;font-size:11px">Categoria</code><br>
+      También acepta: <code style="background:#dbeafe;padding:1px 5px;border-radius:4px;font-size:11px">responsable</code>
+      <code style="background:#dbeafe;padding:1px 5px;border-radius:4px;font-size:11px">implementador</code>
+      <code style="background:#dbeafe;padding:1px 5px;border-radius:4px;font-size:11px">region</code>
+      <code style="background:#dbeafe;padding:1px 5px;border-radius:4px;font-size:11px">gerente</code>
+      <code style="background:#dbeafe;padding:1px 5px;border-radius:4px;font-size:11px">notas</code><br>
+      Solo <strong>Nombre</strong> es obligatorio. No se duplican reportes con el mismo nombre o ID.
     </div>
 
-    <div id="excel-preview-wrap" style="display:none;margin-top:16px">
-      <h3 style="font-size:13px;font-weight:700;margin-bottom:6px" id="excel-summary-title">Vista previa de datos</h3>
-      <div class="import-preview">
-        <table>
-          <thead><tr id="excel-preview-th"></tr></thead>
-          <tbody id="excel-preview-tbody"></tbody>
-        </table>
-      </div>
+    <div class="drop-zone" id="excel-drop" onclick="document.getElementById('excel-file').click()">
+      <div class="drop-zone-icon">📂</div>
+      <p><strong>Click aquí</strong> o arrastra tu archivo Excel (.xlsx / .xls / .csv)</p>
+      <p style="font-size:11px;margin-top:6px;color:var(--muted2)">Los reportes existentes no serán borrados</p>
+    </div>
+    <input type="file" id="excel-file" accept=".xlsx,.xls,.csv" style="display:none" onchange="handleExcelFile(event)">
+
+    <div id="excel-preview-wrap" style="display:none">
+      <div id="col-debug"></div>
+      <div id="excel-preview" class="import-preview"></div>
       <div class="import-legend">
-        <div class="leg-item"><div class="leg-dot" style="background:#f0fdf4"></div><span>Nuevos registros válidos</span></div>
-        <div class="leg-item"><div class="leg-dot" style="background:#fafafa;border:1px solid var(--border)"></div><span>Duplicados u omitidos (Ya existen)</span></div>
+        <div class="leg-item"><div class="leg-dot" style="background:#bbf7d0"></div><span>Nuevo — se agregará</span></div>
+        <div class="leg-item"><div class="leg-dot" style="background:#e5e7eb"></div><span>Ya existe — se omitirá</span></div>
       </div>
       <div id="excel-summary" style="margin-top:10px;font-size:13px;font-weight:600;color:var(--text)"></div>
     </div>
+
     <div id="firebase-debug" style="display:none;margin-top:12px;padding:12px;background:#fffbeb;border:1px solid #fde68a;border-radius:8px;font-size:11px">
       <strong style="color:#92400e">🔍 Primeros 3 registros en Firebase (para comparar):</strong>
       <div id="firebase-debug-content" style="margin-top:6px;font-family:monospace;color:#78350f;white-space:pre-wrap"></div>
@@ -506,7 +496,10 @@ main{padding:24px 28px;max-width:1500px;margin:0 auto}
 
 <div class="toast" id="toast"></div>
 
+<!-- SheetJS for Excel parsing -->
 <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
+
+<!-- FIREBASE -->
 <script type="module">
 import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js";
 import { getFirestore, collection, doc, onSnapshot, setDoc, deleteDoc } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js";
@@ -521,408 +514,143 @@ const firebaseConfig = {
 };
 
 const app = initializeApp(firebaseConfig);
-const db = getFirestore(app);
+const db  = getFirestore(app);
 
-// ── DEFINICIÓN DE ESTADOS ──
+// ── STATUS DEFINITIONS ──
 const REP_STATUSES = [
-  {key:'no-iniciado', label:'No Iniciado', cls:'sr0', pct:0},
-  {key:'ins-sol', label:'Insumos Solicitados', cls:'sr1', pct:14, df:'fecha_ins_sol'},
-  {key:'ins-rec', label:'Insumos Recibidos', cls:'sr2', pct:28, df:'fecha_ins_rec'},
-  {key:'borrador', label:'Borrador Estructurado', cls:'sr3', pct:42},
-  {key:'rev-coor', label:'Revisión Coordinación', cls:'sr4', pct:56},
-  {key:'subido-connect', label:'Subido Connect', cls:'sr5', pct:71},
-  {key:'aprobado-cindi', label:'Aprobado Cindi/Región', cls:'sr7', pct:100}
+  {key:'no-iniciado',       label:'No Iniciado',          cls:'sr0', pct:0},
+  {key:'ins-sol',           label:'Insumos Solicitados',  cls:'sr1', pct:14, df:'fecha_ins_sol'},
+  {key:'ins-rec',           label:'Insumos Recibidos',    cls:'sr2', pct:28, df:'fecha_ins_rec'},
+  {key:'en-produccion',     label:'En Producción',        cls:'sr3', pct:42},
+  {key:'revision-patty',    label:'Revisión Patty',       cls:'sr4', pct:57},
+  {key:'correcciones',      label:'Correcciones',         cls:'sr5', pct:71},
+  {key:'subido-connect',    label:'Subido a Connect',     cls:'sr6', pct:85},
+  {key:'aprobado-cindi',    label:'Aprobado Cindi ✓',    cls:'sr7', pct:100},
 ];
+const REP_FINAL = 'aprobado-cindi';
+
 const INT_STATUSES = [
-  {key:'no-iniciado', label:'No Iniciado', cls:'si0', pct:0},
-  {key:'planificacion', label:'Planificación', cls:'si1', pct:12},
-  {key:'convocatoria', label:'Convocatoria', cls:'si2', pct:25},
-  {key:'ejecucion', label:'En Ejecución', cls:'si3', pct:37},
-  {key:'sistematizacion', label:'Sistematización', cls:'si4', pct:50},
-  {key:'firma-acta', label:'Firma de Acta', cls:'si5', pct:62},
-  {key:'visto-bueno', label:'Visto Bueno Gerencia', cls:'si6', pct:75},
-  {key:'subido-connect', label:'Subido Connect', cls:'si7', pct:87},
-  {key:'aprobado', label:'Aprobado Región', cls:'si11', pct:100}
+  {key:'no-iniciado',          label:'No Iniciado',             cls:'si0',  pct:0},
+  {key:'ins-sol',              label:'Insumos Solicitados',     cls:'si1',  pct:9,  df:'fecha_ins_sol'},
+  {key:'ins-rec',              label:'Insumos Recibidos',       cls:'si2',  pct:18, df:'fecha_ins_rec'},
+  {key:'redaccion',            label:'Redacción',               cls:'si3',  pct:27},
+  {key:'revision-patty',       label:'Revisión Patty',          cls:'si4',  pct:36},
+  {key:'correcciones-1',       label:'Correcciones',            cls:'si5',  pct:45},
+  {key:'revision-cindi',       label:'Revisión Cindi',          cls:'si6',  pct:54},
+  {key:'correcciones-2',       label:'Correcciones',            cls:'si7',  pct:63},
+  {key:'envio-implementador',  label:'Envío VB Implementador',  cls:'si8',  pct:72},
+  {key:'envio-dn',             label:'Envío DN',                cls:'si9',  pct:81},
+  {key:'vb-dn',                label:'Visto Bueno DN',          cls:'si10', pct:90},
+  {key:'subido-connect',       label:'Subido a Connect',        cls:'si10', pct:95},
+  {key:'aprobado-connect',     label:'Aprobado en Connect',     cls:'si11', pct:100},
 ];
-const REP_FINAL = 'aprobado-cindi', INT_FINAL = 'aprobado';
-const PCOLS = ['#7b80a0','#2563eb','#7c3aed','#d97706','#be185d','#dc2626','#0891b2','#059669'];
-const MONTHS_LABELS = ['Ene','Feb','Mar','Abr','May','Jun','Jul','Ago','Sep','Oct','Nov','Dic'];
 
-// ── VARIABLES GLOBALES DE ESTADO ──
-let reportes = [], intervenciones = [], members = [];
-let sortRep = 'prioridad', sortInt = 'prioridad';
-const chartInstances = { months: null, sent: null, delay: null };
+function buildMap(arr){const m={};arr.forEach((s,i)=>m[s.key]={...s,idx:i});return m;}
+const R_MAP=buildMap(REP_STATUSES);
+const I_MAP=buildMap(INT_STATUSES);
+function getList(type){return type==='rep'?REP_STATUSES:INT_STATUSES;}
+function getMap(type){return type==='rep'?R_MAP:I_MAP;}
+function si(type,key){return getMap(type)[key]||getList(type)[0];}
+const PCOLS=['#a8adc4','#3b82f6','#8b5cf6','#f59e0b','#be185d','#dc2626','#9d174d','#b91c1c','#166534','#065f46','#0891b2','#059669','#047857'];
 
-const chartFilters = {
-  month: null,
-  sent: null,
-  delay: null
-};
+// ── STATE ──
+let reportes=[], intervenciones=[], members=['Yo','Patty','Cindi'];
+let sortRep='prioridad', sortInt='prioridad';
+let _excelRows=[];
 
-// Variable para almacenar el año seleccionado (por defecto 2026)
-let selectedYearFilter = "2026";
-
-// Función global para manejar el cambio de año desde el selector
-window.onChangeYearFilter = function() {
-  selectedYearFilter = document.getElementById('flt-year').value;
-  // Al cambiar de año, limpiamos el filtro mensual para evitar desajustes
-  window.clearChartFilter('month'); 
-};
-
-// ── INICIALIZACIÓN Y COUPLING DE FIREBASE ──
-window.addEventListener('DOMContentLoaded', () => {
-  initRealtime();
-  setupExcelDropzone();
-});
-
-function setSyncStatus(st){
-  const el=document.getElementById('sync-indicator');const lbl=document.getElementById('sync-label');
-  if(!el||!lbl)return; el.className='sync-dot '+st;
-  if(st==='live'){lbl.textContent='Sincronizado';}
-  else if(st==='syncing'){lbl.textContent='Guardando...';}
-  else{lbl.textContent='Desconectado';}
+// ── SYNC ──
+function setSyncStatus(s){
+  const el=document.getElementById('sync-indicator');
+  el.className='sync-dot '+s;
+  document.getElementById('sync-label').textContent=s==='live'?'En vivo ✓':s==='syncing'?'Sincronizando...':'Sin conexión';
 }
 
-function initRealtime(){
+function startListeners(){
+  setSyncStatus('syncing');
   onSnapshot(doc(db,'config','members'),snap=>{
-    members = snap.exists() ? (snap.data().list || []) : [];
-    window.members = members;
-    populateSelects();
-    renderMembersSettings();
+    if(snap.exists()) members=snap.data().list||members;
+    populateSelects(); renderRep(); renderInt(); renderRepDone();
   });
-
   onSnapshot(collection(db,'reportes'),snap=>{
-    reportes = snap.docs.map(d=>({id:d.id,...d.data()}));
-    window.reportes = reportes;
-    updateCharts(reportes);
-    renderRep();
-    renderRepDone();
+    reportes=snap.docs.map(d=>({id:d.id,...d.data()}));
+    renderRep(); renderRepDone();
     setSyncStatus('live');
     document.getElementById('loading-screen').style.display='none';
-  },err=>{
-    setSyncStatus('error');
-    document.getElementById('loading-screen').style.display='none';
-    toast('⚠ Error Firebase');
-  });
-
+  },err=>{ setSyncStatus('error'); document.getElementById('loading-screen').style.display='none'; toast('⚠ Error Firebase'); });
   onSnapshot(collection(db,'intervenciones'),snap=>{
     intervenciones=snap.docs.map(d=>({id:d.id,...d.data()}));
-    window.intervenciones = intervenciones;
     renderInt();
   });
 }
 
-// ── PROCESOS DE ESCRITURA ──
+// ── WRITE ──
 const uid=()=>Date.now().toString(36)+Math.random().toString(36).slice(2,6);
-async function saveItem(type,item){
-  setSyncStatus('syncing');
-  await setDoc(doc(db,type==='rep'?'reportes':'intervenciones',item.id),item);
-}
-async function removeItem(type,id){
-  await deleteDoc(doc(db,type==='rep'?'reportes':'intervenciones',id));
-}
-async function saveMembers(list){
-  await setDoc(doc(db,'config','members'),{list});
-}
+async function saveItem(type,item){ setSyncStatus('syncing'); await setDoc(doc(db,type==='rep'?'reportes':'intervenciones',item.id),item); }
+async function removeItem(type,id){ await deleteDoc(doc(db,type==='rep'?'reportes':'intervenciones',id)); }
+async function saveMembers(list){ await setDoc(doc(db,'config','members'),{list}); }
 
-// ── FUNCIONES AUXILIARES ──
+// ── HELPERS ──
 let _tt;
 function toast(msg,dur=2800){const t=document.getElementById('toast');t.textContent=msg;t.classList.add('show');clearTimeout(_tt);_tt=setTimeout(()=>t.classList.remove('show'),dur);}
 function fmt(d){if(!d)return'—';const[y,m,day]=d.split('-');return`${day}/${m}/${y}`;}
 function isOverdue(d,pct){return d&&pct<100&&new Date(d+'T23:59:59')<new Date();}
 function diasAtraso(d){if(!d)return 0;const diff=new Date()-new Date(d+'T23:59:59');return Math.max(0,Math.ceil(diff/86400000));}
 function diasRestantes(d){if(!d)return 0;const diff=new Date(d+'T23:59:59')-new Date();return Math.max(0,Math.ceil(diff/86400000));}
-function memberIdx(n){const i=members.indexOf(n);return i>=0?i:0;}
-const getList=(t)=>t==='rep'?REP_STATUSES:INT_STATUSES;
-const si=(t,k)=> { const l=getList(t); const idx=l.findIndex(s=>s.key===k); return idx>=0?{idx,...l[idx]}:{idx:0,...l[0]}; };
+function memberIdx(n){const i=members.indexOf(n);return i>=0?i%4:0;}
+function initials(n){return n?n.split(' ').map(w=>w[0]).join('').slice(0,2).toUpperCase():'?';}
+function openOv(id){document.getElementById(id).classList.add('open');}
+function closeOv(id){document.getElementById(id).classList.remove('open');}
+document.querySelectorAll('.overlay').forEach(ov=>ov.addEventListener('click',e=>{if(e.target===ov)ov.classList.remove('open');}));
 
+// ── TABS ──
+window.switchTab=function(t){
+  ['rep','rep-done','int'].forEach(k=>{
+    document.getElementById('tab-'+k).classList.toggle('active',k===t);
+    document.getElementById('pane-'+k).classList.toggle('active',k===t);
+  });
+};
+
+// ── SELECTS ──
 function populateSelects(){
-  const fEr=document.getElementById('flt-er'), fEi=document.getElementById('flt-ei');
-  if(fEr&&fEr.options.length<=1){ REP_STATUSES.forEach(s=>fEr.appendChild(new Option(s.label,s.key))); }
-  if(fEi&&fEi.options.length<=1){ INT_STATUSES.forEach(s=>fEi.appendChild(new Option(s.label,s.key))); }
-  ['flt-rr','flt-rr-done','flt-ri','f-responsable'].forEach(id=>{
+  ['flt-rr','flt-ri','flt-rr-done','f-responsable'].forEach(id=>{
     const el=document.getElementById(id);if(!el)return;
-    const prev=el.value; el.innerHTML=id==='f-responsable'?'<option value="">Seleccionar...</option>':'<option value="">Todos los responsables</option>';
-    members.forEach(m=>el.appendChild(new Option(m,m))); el.value=prev;
+    const cur=el.value;
+    el.innerHTML=id.startsWith('flt')?'<option value="">Todos los responsables</option>':'<option value="">Seleccionar...</option>';
+    members.forEach(m=>{const o=document.createElement('option');o.value=m;o.textContent=m;el.appendChild(o);});
+    if(cur)el.value=cur;
+  });
+  [['flt-er','rep'],['flt-ei','int']].forEach(([id,type])=>{
+    const el=document.getElementById(id);if(!el)return;
+    const cur=el.value;
+    el.innerHTML='<option value="">Todos los estados</option>';
+    getList(type).filter(s=>s.key!==REP_FINAL).forEach(s=>{const o=document.createElement('option');o.value=s.key;o.textContent=s.label;el.appendChild(o);});
+    if(cur)el.value=cur;
   });
 }
 
-// ── MODIFICACIÓN DE LÓGICA DE GRÁFICAS (INTEGRANDO EL FILTRO DE AÑO) ──
-function updateCharts(repList) {
-  const hoy = new Date();
-  
-  // 1. FILTRAR PRIMERO POR EL AÑO SELECCIONADO
-  const repDelAnio = repList.filter(r => {
-    if (!r.fecha) return false;
-    return r.fecha.startsWith(selectedYearFilter);
-  });
-
-  // 2. PROCESAR ARREGLO MENSUAL PARA LA GRÁFICA 1 (Basado solo en el año activo)
-  const dataMes = new Array(12).fill(0);
-  repDelAnio.forEach(r => {
-    const mes = parseInt(r.fecha.split('-')[1], 10) - 1;
-    if (mes >= 0 && mes < 12) dataMes[mes]++;
-  });
-
-  // 3. DETERMINAR EL UNIVERSO PARA LAS GRÁFICAS 2 Y 3
-  // Si hay un mes seleccionado en la gráfica 1, las otras dos gráficas sólo reflejan ese mes.
-  // Si no hay mes seleccionado, reflejan todo el año seleccionado.
-  let repParaOtrasGraficas = repDelAnio;
-  if (chartFilters.month !== null) {
-    repParaOtrasGraficas = repDelAnio.filter(r => {
-      const mes = parseInt(r.fecha.split('-')[1], 10) - 1;
-      return mes === chartFilters.month;
-    });
-  }
-
-  // Cómputos para Gráfica 2 (Enviados vs Pendientes)
-  let enviados = 0, pendientes = 0;
-  repParaOtrasGraficas.forEach(r => {
-    const esEnviado = (r.estado === 'subido-connect' || r.estado === 'aprobado-cindi');
-    if (esEnviado) enviados++; else pendientes++;
-  });
-
-  // Cómputos para Gráfica 3 (Retrasos)
-  let retrasados = 0, alDia = 0;
-  repParaOtrasGraficas.forEach(r => {
-    const limite = r.fecha ? new Date(r.fecha + 'T23:59:59') : null;
-    const esRetrasado = (limite && limite < hoy && r.estado !== 'aprobado-cindi');
-    if (esRetrasado) retrasados++; else alDia++;
-  });
-
-  // ── RENDER GRÁFICA 1: MESES ──
-  const ctxM = document.getElementById('c-months').getContext('2d');
-  if(chartInstances.months) chartInstances.months.destroy();
-  chartInstances.months = new Chart(ctxM, {
-    type: 'bar',
-    data: {
-      labels: MONTHS_LABELS,
-      datasets: [{
-        label: 'Reportes',
-        data: dataMes,
-        backgroundColor: '#5b6af0',
-        borderRadius: 4
-      }]
-    },
-    options: {
-      responsive: true,
-      maintainAspectRatio: false,
-      plugins: { legend: { display: false } },
-      scales: { y: { beginAtZero: true, ticks: { stepSize: 1 } } },
-      onClick: (e, elements) => {
-        if (elements.length > 0) {
-          // Guardamos el índice del mes (0 = Enero, 11 = Diciembre)
-          chartFilters.month = elements[0].index;
-          document.getElementById('f-tag-month').style.display = 'inline';
-          // Ejecuta el render general de reportes en la tabla y fuerza actualización cruzada de las gráficas
-          renderRep(); 
-        }
-      }
-    }
-  });
-
-  // ── RENDER GRÁFICA 2: ENVIADOS VS PENDIENTES ──
-  const ctxS = document.getElementById('c-sent').getContext('2d');
-  if(chartInstances.sent) chartInstances.sent.destroy();
-  chartInstances.sent = new Chart(ctxS, {
-    type: 'doughnut',
-    data: {
-      labels: ['Enviados', 'Pendientes'],
-      datasets: [{
-        data: [enviados, pendientes],
-        backgroundColor: ['#10b981', '#7b80a0']
-      }]
-    },
-    options: {
-      responsive: true,
-      maintainAspectRatio: false,
-      plugins: {
-        legend: { position: 'bottom', labels: { boxWidth: 10, font: { size: 10 } } }
-      },
-      onClick: (e, elements) => {
-        if (elements.length > 0) {
-          chartFilters.sent = elements[0].index === 0 ? 'enviado' : 'pendiente';
-          document.getElementById('f-tag-sent').style.display = 'inline';
-          renderRep();
-        }
-      }
-    }
-  });
-
-  // ── RENDER GRÁFICA 3: RETRASOS ──
-  const ctxD = document.getElementById('c-delay').getContext('2d');
-  if(chartInstances.delay) chartInstances.delay.destroy();
-  chartInstances.delay = new Chart(ctxD, {
-    type: 'pie',
-    data: {
-      labels: ['Retrasados', 'Al día'],
-      datasets: [{
-        data: [retrasados, alDia],
-        backgroundColor: ['#ef4444', '#eef0ff'],
-        borderColor: ['#ef4444', '#dde1ef']
-      }]
-    },
-    options: {
-      responsive: true,
-      maintainAspectRatio: false,
-      plugins: {
-        legend: { position: 'bottom', labels: { boxWidth: 10, font: { size: 10 } } }
-      },
-      onClick: (e, elements) => {
-        if (elements.length > 0) {
-          chartFilters.delay = elements[0].index === 0 ? 'retrasado' : 'aldia';
-          document.getElementById('f-tag-delay').style.display = 'inline';
-          renderRep();
-        }
-      }
-    }
-  });
+// ── STATS ──
+function renderStats(items,cid,type){
+  const total=items.length;
+  const last=getList(type).slice(-1)[0].key;
+  const noIn=items.filter(i=>i.estado==='no-iniciado').length;
+  const enC=items.filter(i=>i.estado!=='no-iniciado'&&i.estado!==last).length;
+  const done=items.filter(i=>i.estado===last).length;
+  const avg=total?Math.round(items.reduce((a,b)=>a+si(type,b.estado).pct,0)/total):0;
+  const pills=[
+    {icon:'📋',lbl:'Total',      val:total,   bg:'#eef0ff',ibg:'#dde1ff',c:'#3730a3'},
+    {icon:'⏸', lbl:'Sin iniciar',val:noIn,    bg:'#f8f9fc',ibg:'#eef0f8',c:'#7b80a0'},
+    {icon:'⚡', lbl:'En curso',   val:enC,     bg:'#eff6ff',ibg:'#dbeafe',c:'#1d4ed8'},
+    {icon:'✅', lbl:'Finalizados',val:done,    bg:'#d1fae5',ibg:'#a7f3d0',c:'#065f46'},
+    {icon:'📈', lbl:'Avance prom',val:avg+'%', bg:'#fffbeb',ibg:'#fde68a',c:'#92400e'},
+  ];
+  document.getElementById(cid).innerHTML=pills.map(p=>`
+    <div class="stat-pill" style="background:${p.bg};border-color:${p.ibg}">
+      <div class="stat-icon" style="background:${p.ibg}">${p.icon}</div>
+      <div><div class="stat-val" style="color:${p.c}">${p.val}</div><div class="stat-lbl">${p.lbl}</div></div>
+    </div>`).join('');
 }
 
-window.clearChartFilter = function(fKey) {
-  chartFilters[fKey] = null;
-  const tag = document.getElementById('f-tag-' + fKey);
-  if (tag) tag.style.display = 'none';
-  renderRep();
-};
-
-// ── FILTRADO Y RENDER DE REPORTES (CONSIDERANDO LOS FILTROS DE LAS GRÁFICAS) ──
-function getFilteredReps() {
-  const hoy = new Date();
-  return reportes.filter(r => {
-    // 1. Ajuste Obligatorio: Validar el año seleccionado
-    if (!r.fecha || !r.fecha.startsWith(selectedYearFilter)) return false;
-
-    // 2. Filtros por clics en las gráficas
-    if (chartFilters.month !== null) {
-      const mes = parseInt(r.fecha.split('-')[1], 10) - 1;
-      if (mes !== chartFilters.month) return false;
-    }
-    
-    if (chartFilters.sent !== null) {
-      const esEnviado = (r.estado === 'subido-connect' || r.estado === 'aprobado-cindi');
-      if (chartFilters.sent === 'enviado' && !esEnviado) return false;
-      if (chartFilters.sent === 'pendiente' && esEnviado) return false;
-    }
-    
-    if (chartFilters.delay !== null) {
-      const limite = r.fecha ? new Date(r.fecha + 'T23:59:59') : null;
-      const esRetrasado = (limite && limite < hoy && r.estado !== 'aprobado-cindi');
-      if (chartFilters.delay === 'retrasado' && !esRetrasado) return false;
-      if (chartFilters.delay === 'aldia' && esRetrasado) return false;
-    }
-
-    return true;
-  });
-}
-
-window.renderRep = function() {
-  const q = document.getElementById('srch-rep').value.toLowerCase();
-  const fEr = document.getElementById('flt-er').value;
-  const fRr = document.getElementById('flt-rr').value;
-  
-  // Obtenemos los reportes filtrados por la lógica de gráficas y tiempo
-  let list = getFilteredReps().filter(r => r.estado !== REP_FINAL);
-  
-  if(q) list = list.filter(r => r.nombre.toLowerCase().includes(q) || (r.desc && r.desc.toLowerCase().includes(q)));
-  if(fEr) list = list.filter(r => r.estado === fEr);
-  if(fRr) list = list.filter(r => r.responsable === fRr);
-
-  // Re-calcular los gráficos basados en los datos actuales mutados
-  updateCharts(reportes);
-
-  // Ordenamiento
-  const hoy = new Date();
-  if(sortRep === 'nombre-asc') list.sort((a,b)=>a.nombre.localeCompare(b.nombre));
-  else if(sortRep==='fecha-asc') list.sort((a,b)=>(a.fecha||'9999').localeCompare(b.fecha||'9999'));
-  else if(sortRep==='fecha-desc') list.sort((a,b)=>(b.fecha||'').localeCompare(a.fecha||''));
-  else if(sortRep==='atraso-desc') list.sort((a,b)=>diasAtraso(b.fecha)-diasAtraso(a.fecha));
-  else {
-    list.sort((a,b) => {
-      const oa=isOverdue(a.fecha,si('rep',a.estado).pct)?1:0;
-      const ob=isOverdue(b.fecha,si('rep',b.estado).pct)?1:0;
-      if(oa!==ob) return ob - oa;
-      return (a.fecha||'9999').localeCompare(b.fecha||'9999');
-    });
-  }
-
-  document.getElementById('bdg-rep').textContent = list.length;
-  renderStats('rep', list);
-
-  const container = document.getElementById('body-rep');
-  container.innerHTML = '';
-  if(!list.length) { container.innerHTML='<div class="empty"><div class="empty-icon">📁</div><p>No hay reportes activos que coincidan.</p></div>'; return; }
-  list.forEach((item, i) => container.innerHTML += rowHtml('rep', item, i));
-};
-
-window.renderRepDone = function() {
-  const q = document.getElementById('srch-rep-done').value.toLowerCase();
-  const fRr = document.getElementById('flt-rr-done').value;
-  let list = reportes.filter(r => r.estado === REP_FINAL);
-  
-  if(q) list = list.filter(r => r.nombre.toLowerCase().includes(q));
-  if(fRr) list = list.filter(r => r.responsable === fRr);
-  
-  list.sort((a,b)=>(b.completedAt||0)-(a.completedAt||0));
-  document.getElementById('bdg-rep-done').textContent = list.length;
-  renderStats('rep-done', list);
-
-  const container = document.getElementById('body-rep-done');
-  container.innerHTML = '';
-  if(!list.length) { container.innerHTML='<div class="empty"><div class="empty-icon">🏆</div><p>No hay reportes completados todavía.</p></div>'; return; }
-  list.forEach((item, i) => container.innerHTML += rowHtmlDone(item, i));
-};
-
-window.renderInt = function() {
-  const q = document.getElementById('srch-int').value.toLowerCase();
-  const fEi = document.getElementById('flt-ei').value;
-  const fRi = document.getElementById('flt-ri').value;
-  let list = intervenciones.filter(r => r.estado !== INT_FINAL);
-  
-  if(q) list = list.filter(r => r.nombre.toLowerCase().includes(q) || (r.desc && r.desc.toLowerCase().includes(q)));
-  if(fEi) list = list.filter(r => r.estado === fEi);
-  if(fRi) list = list.filter(r => r.responsable === fRi);
-
-  if(sortInt==='nombre-asc') list.sort((a,b)=>a.nombre.localeCompare(b.nombre));
-  else if(sortInt==='fecha-asc') list.sort((a,b)=>(a.fecha||'9999').localeCompare(b.fecha||'9999'));
-  else if(sortInt==='fecha-desc') list.sort((a,b)=>(b.fecha||'').localeCompare(a.fecha||''));
-  else if(sortInt==='atraso-desc') list.sort((a,b)=>diasAtraso(b.fecha)-diasAtraso(a.fecha));
-  else {
-    list.sort((a,b) => {
-      const oa=isOverdue(a.fecha,si('int',a.estado).pct)?1:0;
-      const ob=isOverdue(b.fecha,si('int',b.estado).pct)?1:0;
-      if(oa!==ob) return ob - oa;
-      return (a.fecha||'9999').localeCompare(b.fecha||'9999');
-    });
-  }
-
-  document.getElementById('bdg-int').textContent = list.length;
-  renderStats('int', list);
-
-  const container = document.getElementById('body-int');
-  container.innerHTML = '';
-  if(!list.length) { container.innerHTML='<div class="empty"><div class="empty-icon">🔧</div><p>No hay intervenciones activas que coincidan.</p></div>'; return; }
-  list.forEach((item, i) => container.innerHTML += rowHtml('int', item, i));
-};
-
-function renderStats(type, list) {
-  let h = '';
-  if(type === 'rep' || type === 'int') {
-    const hoy = new Date();
-    let delayed = 0;
-    list.forEach(r => { if(isOverdue(r.fecha, si(type, r.estado).pct)) delayed++; });
-    h = `
-      <div class="stat-pill"><div class="stat-icon" style="background:var(--accent-lt);color:var(--accent)">📋</div><div><div class="stat-val">${list.length}</div><div class="stat-lbl">Activos</div></div></div>
-      <div class="stat-pill"><div class="stat-icon" style="background:#fee2e2;color:var(--danger)">⚠</div><div><div class="stat-val">${delayed}</div><div class="stat-lbl">Con Atraso</div></div></div>
-    `;
-  } else {
-    h = `<div class="stat-pill"><div class="stat-icon" style="background:#d1fae5;color:#059669">🏆</div><div><div class="stat-val">${list.length}</div><div class="stat-lbl">Aprobados</div></div></div>`;
-  }
-  const el = document.getElementById('stats-' + type);
-  if(el) el.innerHTML = h;
-}
-
-// ── STEPPER HTML ──
+// ── STEPPER ──
 function stepperHtml(type,itemId,estado){
   const list=getList(type);
   const curIdx=si(type,estado).idx;
@@ -938,18 +666,19 @@ function stepperHtml(type,itemId,estado){
   return h+'</div>';
 }
 
-// ── INLINE DATE ──
+// ── INLINE DATE — always visible so user can fill them any time ──
 function inlineDateHtml(type,id,item){
+  // Always show both date fields so imported items can have them filled in
   return `
     <div class="date-edit-row">
       <label>📬 Ins. Sol:</label>
-      <input type="date" id="ds-${id}" value="${item.fecha_ins_sol||''}">
+      <input type="date" id="ds-${id}" value="${item.fecha_ins_sol||''}" title="Fecha de solicitud de insumos">
       <button class="sv" onclick="saveInlineDate('${type}','${id}','fecha_ins_sol','ds-${id}')">✓</button>
       ${item.fecha_ins_sol?`<span style="font-size:10px;color:#7c3aed;font-weight:600">${fmt(item.fecha_ins_sol)}</span>`:'<span style="font-size:10px;color:var(--muted2)">sin fecha</span>'}
     </div>
     <div class="date-edit-row">
       <label>📦 Ins. Rec:</label>
-      <input type="date" id="dr-${id}" value="${item.fecha_ins_rec||''}">
+      <input type="date" id="dr-${id}" value="${item.fecha_ins_rec||''}" title="Fecha de recepción de insumos">
       <button class="sv" onclick="saveInlineDate('${type}','${id}','fecha_ins_rec','dr-${id}')">✓</button>
       ${item.fecha_ins_rec?`<span style="font-size:10px;color:#7c3aed;font-weight:600">${fmt(item.fecha_ins_rec)}</span>`:'<span style="font-size:10px;color:var(--muted2)">sin fecha</span>'}
     </div>`;
@@ -963,160 +692,245 @@ window.saveInlineDate=async function(type,id,field,inputId){
   toast(val?`📅 ${fmt(val)}`:'Fecha borrada');
 };
 
-// ── CONSTRUCCIÓN DE FILAS ACTIVAS ──
-function rowHtml(type, item, i) {
-  const info = si(type, item.estado);
-  const mi = memberIdx(item.responsable);
-  const od = isOverdue(item.fecha, info.pct);
-  const dias = diasAtraso(item.fecha);
-  const rest = diasRestantes(item.fecha);
-  const pc = PCOLS[info.idx] || 'var(--accent)';
-  const sel = type === 'rep' ? selRep : selInt;
-
-  let tagsHtml = '';
-  if (type === 'rep') {
-    if (item.id_intervencion) tagsHtml += `<span style="background:#f0f9ff;color:#0369a1;border:1px solid #bae6fd;border-radius:5px;padding:1px 6px;font-size:10px;font-weight:700">🔑 ${item.id_intervencion}</span>`;
-    if (item.tipo_reporte) tagsHtml += `<span style="background:#fdf4ff;color:#7e22ce;border:1px solid #e9d5ff;border-radius:5px;padding:1px 6px;font-size:10px;font-weight:600">📋 ${item.tipo_reporte}</span>`;
-    if (item.categoria) tagsHtml += `<span style="background:#fff7ed;color:#c2410c;border:1px solid #fed7aa;border-radius:5px;padding:1px 6px;font-size:10px;font-weight:600">🏷 ${item.categoria}</span>`;
-  } else if (type === 'int' && item.tipo) {
-    tagsHtml += `<span style="background:#f5f3ff;color:#6d28d9;border:1px solid #ddd6fe;border-radius:5px;padding:1px 6px;font-size:10px;font-weight:600">⚙ ${item.tipo}</span>`;
-  }
-
-  let implHtml = '';
-  if (item.implementador || item.region) {
-    implHtml = `<span class="c-note" style="color:var(--muted);font-weight:500;margin-top:3px;display:flex;gap:12px">`;
-    if (item.implementador) implHtml += `<span>🏢 ${item.implementador}</span>`;
-    if (item.region) implHtml += `<span>📍 ${item.region}</span>`;
-    implHtml += `</span>`;
-  }
-
-  const inlineDates = type === 'rep' ? inlineDateHtml(type, item.id, item) : '';
-
-  return `
-    <div class="row-item g-cols">
-      <div><input type="checkbox" class="row-cb" ${sel.has(item.id) ? 'checked' : ''} onclick="onRowCb('${type}','${item.id}',this.checked)"></div>
-      <div class="row-num">${i + 1}</div>
-      <div>
-        <strong style="font-size:13.5px;font-weight:600;color:var(--text);display:block">${item.nombre}</strong>
-        ${item.desc ? `<span class="c-note" style="font-style:italic;margin-bottom:2px">📝 ${item.desc}</span>` : ''}
-        ${tagsHtml ? `<div style="display:flex;gap:5px;margin-top:4px;flex-wrap:wrap">${tagsHtml}</div>` : ''}
-        ${implHtml}
-        ${inlineDates}
-      </div>
-      <div>
-        <div class="av-wrap">
-          <div class="av av${mi % 4}">${(item.responsable || 'U').slice(0, 2).toUpperCase()}</div>
-          <select class="resp-select" onchange="changeRowResponsable('${type}','${item.id}',this.value)">
-            <option value="">Sin asignar</option>
-            ${members.map(m => `<option value="${m}" ${m === item.responsable ? 'selected' : ''}>${m}</option>`).join('')}
-          </select>
-        </div>
-      </div>
-      <div>
-        <button class="estado-select ${info.cls}" onclick="openStatePicker('${type}','${item.id}')">${info.label}</button>
-        <div style="margin-top:6px">${stepperHtml(type, item.id, item.estado)}</div>
-      </div>
-      <div><div class="prog-wrap">
-        <div class="prog-bar"><div class="prog-fill" style="width:${info.pct}%;background:${pc}"></div></div>
-        <span class="prog-lbl">${info.pct}%</span>
-      </div></div>
-      <div>
-        <div class="date-main${od ? ' overdue' : ''}" style="font-size:13px;font-weight:700">${item.fecha ? fmt(item.fecha) : '<span style="color:var(--muted2);font-weight:400">Sin fecha</span>'}</div>
-        ${od ? `<div class="atraso-badge"><span style="font-size:13px">⚠</span> ${dias} día${dias === 1 ? '' : 's'} de atraso</div>` : ''}
-        ${!od && item.fecha && info.pct < 100 && rest <= 30 ? `<div class="dias-ok" style="font-weight:700">⏰ ${rest} día${rest === 1 ? '' : 's'} restantes</div>` : ''}
-        ${!od && item.fecha && info.pct < 100 && rest > 30 ? `<div class="dias-ok">✓ ${rest} días restantes</div>` : ''}
-        ${info.pct === 100 && !od ? `<div style="display:inline-flex;align-items:center;gap:4px;background:#d1fae5;color:#065f46;border-radius:6px;padding:2px 7px;font-size:10.5px;font-weight:700;margin-top:3px">🏆 Completado</div>` : ''}
-      </div>
-      <div class="row-actions">
-        <button class="icon-btn" onclick="openStatePicker('${type}','${item.id}')" title="Ver todos los estados">🔄</button>
-        <button class="icon-btn" onclick="editItem('${type}','${item.id}')" title="Editar">✏️</button>
-        <button class="icon-btn" onclick="deleteItem('${type}','${item.id}')" title="Eliminar" style="color:var(--danger)">🗑</button>
-      </div>
-    </div>`;
-}
-
-// ── CONSTRUCCIÓN DE FILAS COMPLETADAS ──
-function rowHtmlDone(item, i) {
-  const mi = memberIdx(item.responsable);
-  const completedDate = item.completedAt ? new Date(item.completedAt).toLocaleDateString('es-GT', { day: '2-digit', month: '2-digit', year: 'numeric' }) : '—';
-  
-  let tagParts = [];
-  if (item.id_intervencion) tagParts.push(`<span style="background:#f0f9ff;color:#0369a1;border:1px solid #bae6fd;border-radius:5px;padding:1px 6px;font-size:10px;font-weight:700">🔑 ${item.id_intervencion}</span>`);
-  if (item.tipo_reporte) tagParts.push(`<span style="background:#fdf4ff;color:#7e22ce;border:1px solid #e9d5ff;border-radius:5px;padding:1px 6px;font-size:10px;font-weight:600">📋 ${item.tipo_reporte}</span>`);
-  if (item.categoria) tagParts.push(`<span style="background:#fff7ed;color:#c2410c;border:1px solid #fed7aa;border-radius:5px;padding:1px 6px;font-size:10px;font-weight:600">🏷 ${item.categoria}</span>`);
-
-  let implParts = [];
-  if (item.implementador) implParts.push(`🏢 ${item.implementador}`);
-  if (item.region) implParts.push(`📍 ${item.region}`);
-
-  return `
-    <div class="row-item g-cols-done">
-      <div class="row-num">${i + 1}</div>
-      <div>
-        <strong style="font-size:13px;font-weight:600;display:block">${item.nombre}</strong>
-        ${item.desc ? `<span class="c-note" style="font-style:italic">📝 ${item.desc}</span>` : ''}
-        ${item.notes ? `<span class="c-note">💬 ${item.notes}</span>` : ''}
-        ${tagParts.length ? `<div style="display:flex;gap:5px;margin-top:4px;flex-wrap:wrap">${tagParts.join('')}</div>` : ''}
-        ${implParts.length ? `<span class="c-note" style="color:var(--muted);margin-top:3px">${implParts.join('  |  ')}</span>` : ''}
-      </div>
-      <div>
-        <div class="av-wrap">
-          <div class="av av${mi % 4}">${(item.responsable || 'U').slice(0, 2).toUpperCase()}</div>
-          <span>${item.responsable || 'Sin asignar'}</span>
-        </div>
-      </div>
-      <div style="font-weight:600;color:#059669;font-size:12.5px">🎉 ${completedDate}</div>
-      <div style="font-weight:500;font-size:12.5px">${item.fecha ? fmt(item.fecha) : '—'}</div>
-      <div class="row-actions">
-        <button class="icon-btn" onclick="openStatePicker('rep','${item.id}')" title="Reabrir o cambiar estado">🔄</button>
-        <button class="icon-btn" onclick="deleteItem('rep','${item.id}')" title="Eliminar definitivamente" style="color:var(--danger)">🗑</button>
-      </div>
-    </div>`;
-}
-
-// ── INTERACCIONES DE INTERFAZ GLOBAL ──
-window.switchTab=function(t){
-  document.querySelectorAll('.tab').forEach(el=>el.classList.remove('active'));
-  document.querySelectorAll('.pane').forEach(el=>el.classList.remove('active'));
-  document.getElementById('tab-'+t).classList.add('active');
-  document.getElementById('pane-'+t).classList.add('active');
-  if(t==='rep') renderRep();
-  if(t==='rep-done') renderRepDone();
-  if(t==='int') renderInt();
-};
-
-window.setSortRep=function(v){ sortRep=v; renderRep(); };
-window.setSortInt=function(v){ sortInt=v; renderInt(); };
-const openOv=(id)=>document.getElementById(id).classList.add('open');
-window.closeOv=function(id){ document.getElementById(id).classList.remove('open'); };
-
-window.changeRowResponsable=async function(type,id,val){
+// ── QUICK SET STATE ──
+window.quickSetState=async function(type,id,key){
   const list=type==='rep'?reportes:intervenciones;
-  const item=list.find(r=>r.id===id); if(!item)return;
-  await saveItem(type,{...item,responsable:val});
-  toast(`Encargado asignado: ${val||'Ninguno'}`);
+  const item=list.find(r=>r.id===id);if(!item||item.estado===key)return;
+  const target=getList(type).find(s=>s.key===key);if(!target)return;
+  if(target.df&&!item[target.df]){
+    _pending={type,id,next:target};
+    document.getElementById('dp-title').textContent=`📅 ${target.label}`;
+    document.getElementById('dp-desc').textContent=target.df==='fecha_ins_sol'?'¿En qué fecha solicitaste los insumos?':'¿En qué fecha recibiste los insumos?';
+    document.getElementById('dp-date').value=new Date().toISOString().split('T')[0];
+    openOv('ov-date');
+  } else {
+    await saveItem(type,{...item,estado:key});
+    toast(`→ ${target.label}`);
+  }
 };
 
-// ── MANEJO DEL REPRODUCTOR DE CAMBIO DE ESTADOS ──
+// ── QUICK SET RESPONSABLE ──
+window.quickSetResp=async function(type,id,name){
+  const list=type==='rep'?reportes:intervenciones;
+  const item=list.find(r=>r.id===id);if(!item||item.responsable===name)return;
+  await saveItem(type,{...item,responsable:name});
+  toast(`👤 → ${name}`);
+};
+
+// ── ROW HTML (active) ──
+function rowHtml(item,i,type){
+  const info=si(type,item.estado);
+  const mi=memberIdx(item.responsable);
+  const pc=PCOLS[info.idx]||'#5b6af0';
+  const od=isOverdue(item.fecha,info.pct);
+  const implParts=[];
+  if(item.implementador)implParts.push(`🏢 ${item.implementador}`);
+  if(item.region)implParts.push(`📍 ${item.region}`);
+  if(item.gerente)implParts.push(`👤 Gte: ${item.gerente}`);
+
+  const dias=diasAtraso(item.fecha);
+  const rest=diasRestantes(item.fecha);
+
+  // N/A placeholders for empty fields
+  const naTag = (label,icon='')=>`<span style="background:#f1f2f6;color:var(--muted2);border:1px solid var(--border);border-radius:5px;padding:1px 6px;font-size:10px;font-weight:500">${icon} ${label}: N/A</span>`;
+
+  return `<div class="row-item g-cols" id="row-${item.id}">
+    <div><input type="checkbox" class="row-cb" id="cb-${item.id}" onchange="onRowCb('${type}','${item.id}',this.checked)"></div>
+    <div class="row-num">${i+1}</div>
+    <div>
+      <strong style="font-size:13px;font-weight:600;display:block">${item.nombre||'Sin nombre'}</strong>
+      ${item.desc?`<span class="c-note" style="font-style:italic">📝 ${item.desc}</span>`:``}
+      ${item.notas?`<span class="c-note">💬 ${item.notas}</span>`:``}
+      <div style="display:flex;flex-wrap:wrap;gap:4px;margin-top:4px">
+        ${item.id_intervencion?`<span style="background:#f0f9ff;color:#0369a1;border:1px solid #bae6fd;border-radius:5px;padding:1px 6px;font-size:10px;font-weight:700">🔑 ${item.id_intervencion}</span>`:naTag('ID','🔑')}
+        ${item.tipo_reporte?`<span style="background:#fdf4ff;color:#7e22ce;border:1px solid #e9d5ff;border-radius:5px;padding:1px 6px;font-size:10px;font-weight:600">📋 ${item.tipo_reporte}</span>`:naTag('Tipo','📋')}
+        ${item.categoria?`<span style="background:#fff7ed;color:#c2410c;border:1px solid #fed7aa;border-radius:5px;padding:1px 6px;font-size:10px;font-weight:600">🏷 ${item.categoria}</span>`:naTag('Categoría','🏷')}
+      </div>
+      ${implParts.length
+        ? `<span class="c-note" style="color:#0891b2">${implParts.join(' · ')}</span>`
+        : `<span class="c-note" style="color:var(--muted2)">🏢 Implementador: N/A · 📍 Región: N/A</span>`}
+      ${inlineDateHtml(type,item.id,item)}
+      <div style="display:flex;align-items:center;gap:6px;margin-top:5px">
+        <span style="font-size:10px;color:var(--muted2);white-space:nowrap">Estado:</span>
+        ${stepperHtml(type,item.id,item.estado)}
+      </div>
+    </div>
+    <div><div class="av-wrap">
+      <div class="av av${mi}">${initials(item.responsable)}</div>
+      <select class="resp-select" onchange="quickSetResp('${type}','${item.id}',this.value)">
+        ${members.map(m=>`<option value="${m}" ${m===item.responsable?'selected':''}>${m}</option>`).join('')}
+      </select>
+    </div></div>
+    <div>
+      <select class="estado-select ${info.cls}" onchange="quickSetState('${type}','${item.id}',this.value)">
+        ${getList(type).map(s=>`<option value="${s.key}" ${s.key===item.estado?'selected':''}>${s.label}</option>`).join('')}
+      </select>
+    </div>
+    <div><div class="prog-wrap">
+      <div class="prog-bar"><div class="prog-fill" style="width:${info.pct}%;background:${pc}"></div></div>
+      <span class="prog-lbl">${info.pct}%</span>
+    </div></div>
+    <div>
+      <div class="date-main${od?' overdue':''}" style="font-size:13px;font-weight:700">${item.fecha?fmt(item.fecha):'<span style="color:var(--muted2);font-weight:400">Sin fecha</span>'}</div>
+      ${od?`<div class="atraso-badge"><span style="font-size:13px">⚠</span> ${dias} día${dias===1?'':'s'} de atraso</div>`:''}
+      ${!od&&item.fecha&&info.pct<100&&rest<=30?`<div class="dias-ok" style="font-weight:700">⏰ ${rest} día${rest===1?'':'s'} restantes</div>`:''}
+      ${!od&&item.fecha&&info.pct<100&&rest>30?`<div class="dias-ok">✓ ${rest} días restantes</div>`:''}
+      ${info.pct===100&&!od?`<div style="display:inline-flex;align-items:center;gap:4px;background:#d1fae5;color:#065f46;border-radius:6px;padding:2px 7px;font-size:10.5px;font-weight:700;margin-top:3px">🏆 Completado</div>`:''}
+    </div>
+    <div class="row-actions">
+      <button class="icon-btn" onclick="openStatePicker('${type}','${item.id}')" title="Ver todos los estados">🔄</button>
+      <button class="icon-btn" onclick="editItem('${type}','${item.id}')" title="Editar">✏️</button>
+      <button class="icon-btn" onclick="deleteItem('${type}','${item.id}')" title="Eliminar" style="color:var(--danger)">🗑</button>
+    </div>
+  </div>`;
+}
+
+// ── ROW HTML (completed) ──
+function rowHtmlDone(item,i){
+  const mi=memberIdx(item.responsable);
+  const completedDate=item.completedAt?new Date(item.completedAt).toLocaleDateString('es-GT',{day:'2-digit',month:'2-digit',year:'numeric'}):'—';
+  const tagParts=[];
+  if(item.id_intervencion)tagParts.push(`<span style="background:#f0f9ff;color:#0369a1;border:1px solid #bae6fd;border-radius:5px;padding:1px 6px;font-size:10px;font-weight:700">🔑 ${item.id_intervencion}</span>`);
+  if(item.tipo_reporte)tagParts.push(`<span style="background:#fdf4ff;color:#7e22ce;border:1px solid #e9d5ff;border-radius:5px;padding:1px 6px;font-size:10px;font-weight:600">📋 ${item.tipo_reporte}</span>`);
+  if(item.categoria)tagParts.push(`<span style="background:#fff7ed;color:#c2410c;border:1px solid #fed7aa;border-radius:5px;padding:1px 6px;font-size:10px;font-weight:600">🏷 ${item.categoria}</span>`);
+  const implParts=[];
+  if(item.implementador)implParts.push(`🏢 ${item.implementador}`);
+  if(item.region)implParts.push(`📍 ${item.region}`);
+  return `<div class="row-item g-cols-done">
+    <div class="row-num">${i+1}</div>
+    <div>
+      <strong style="font-size:13px;font-weight:600;display:block">${item.nombre}</strong>
+      ${item.desc?`<span class="c-note" style="font-style:italic">📝 ${item.desc}</span>`:''}
+      ${item.notas?`<span class="c-note">💬 ${item.notas}</span>`:''}
+      ${tagParts.length?`<div style="display:flex;flex-wrap:wrap;gap:4px;margin-top:4px">${tagParts.join('')}</div>`:''}
+      ${implParts.length?`<span class="c-note" style="color:#0891b2">${implParts.join(' · ')}</span>`:''}
+    </div>
+    <div><div class="av-wrap"><div class="av av${mi}">${initials(item.responsable)}</div><span>${item.responsable||'—'}</span></div></div>
+    <div><span style="display:inline-flex;align-items:center;gap:5px;background:#d1fae5;color:#065f46;border-radius:20px;padding:4px 10px;font-size:11.5px;font-weight:700">✅ ${completedDate}</span></div>
+    <div><div class="date-main">${fmt(item.fecha)}</div></div>
+    <div class="row-actions">
+      <button class="icon-btn" onclick="restoreReport('${item.id}')" title="Mover de regreso a Activos" style="color:#d97706">↩</button>
+      <button class="icon-btn" onclick="deleteItem('rep','${item.id}')" title="Eliminar" style="color:var(--danger)">🗑</button>
+    </div>
+  </div>`;
+}
+
+// ── RESTORE REPORT ──
+window.restoreReport=async function(id){
+  const item=reportes.find(r=>r.id===id);if(!item)return;
+  await saveItem('rep',{...item,estado:'subido-connect',completedAt:null});
+  toast('↩ Reporte movido de regreso a Activos');
+};
+
+// ── SORT ──
+function sortItems(items,key){
+  return [...items].sort((a,b)=>{
+    if(key==='prioridad'){
+      // 1) Overdue first (sorted by most days overdue), 2) then upcoming by closest date, 3) no date last
+      const aPct=a._pct!==undefined?a._pct:0;
+      const bPct=b._pct!==undefined?b._pct:0;
+      const aOver=a.fecha&&a._pct<100&&new Date(a.fecha+'T23:59:59')<new Date();
+      const bOver=b.fecha&&b._pct<100&&new Date(b.fecha+'T23:59:59')<new Date();
+      const aDA=diasAtraso(a.fecha);
+      const bDA=diasAtraso(b.fecha);
+      // Both overdue → most days overdue first
+      if(aOver&&bOver) return bDA-aDA;
+      // Only a overdue
+      if(aOver) return -1;
+      // Only b overdue
+      if(bOver) return 1;
+      // Neither overdue → closest date first
+      if(!a.fecha&&!b.fecha) return 0;
+      if(!a.fecha) return 1;
+      if(!b.fecha) return -1;
+      return a.fecha.localeCompare(b.fecha);
+    }
+    if(key==='fecha-asc'){if(!a.fecha)return 1;if(!b.fecha)return -1;return a.fecha.localeCompare(b.fecha);}
+    if(key==='fecha-desc'){if(!a.fecha)return 1;if(!b.fecha)return -1;return b.fecha.localeCompare(a.fecha);}
+    if(key==='atraso-desc') return diasAtraso(b.fecha)-diasAtraso(a.fecha);
+    if(key==='nombre-asc') return(a.nombre||'').localeCompare(b.nombre||'','es');
+    return 0;
+  });
+}
+
+// ── FILTER ──
+function getFiltered(list,srch,est,resp){
+  const q=document.getElementById(srch).value.toLowerCase();
+  const fE=est?document.getElementById(est).value:'';
+  const fR=resp?document.getElementById(resp).value:'';
+  return list.filter(r=>(!q||r.nombre.toLowerCase().includes(q)||(r.desc||'').toLowerCase().includes(q))&&(!fE||r.estado===fE)&&(!fR||r.responsable===fR));
+}
+
+// ── RENDER ──
+function renderRep(){
+  const active=reportes.filter(r=>r.estado!==REP_FINAL).map(r=>({...r,_pct:si('rep',r.estado).pct}));
+  const items=sortItems(getFiltered(active,'srch-rep','flt-er','flt-rr'),sortRep);
+  renderStats(items,'stats-rep','rep');
+  document.getElementById('bdg-rep').textContent=items.length;
+  document.getElementById('body-rep').innerHTML=items.length
+    ? items.map((r,i)=>rowHtml(r,i,'rep')).join('')
+    : `<div class="empty"><div class="empty-icon">📭</div><p>No hay reportes activos</p></div>`;
+}
+
+function renderRepDone(){
+  const done=reportes.filter(r=>r.estado===REP_FINAL);
+  const q=(document.getElementById('srch-rep-done')?.value||'').toLowerCase();
+  const fR=document.getElementById('flt-rr-done')?.value||'';
+  const items=done.filter(r=>(!q||r.nombre.toLowerCase().includes(q))&&(!fR||r.responsable===fR))
+    .sort((a,b)=>(b.completedAt||0)-(a.completedAt||0));
+  document.getElementById('bdg-rep-done').textContent=items.length;
+  // Stats for done
+  const pills=[
+    {icon:'🏆',lbl:'Total completados',val:items.length,bg:'#d1fae5',ibg:'#a7f3d0',c:'#065f46'},
+  ];
+  document.getElementById('stats-rep-done').innerHTML=pills.map(p=>`
+    <div class="stat-pill" style="background:${p.bg};border-color:${p.ibg}">
+      <div class="stat-icon" style="background:${p.ibg}">${p.icon}</div>
+      <div><div class="stat-val" style="color:${p.c}">${p.val}</div><div class="stat-lbl">${p.lbl}</div></div>
+    </div>`).join('');
+  document.getElementById('body-rep-done').innerHTML=items.length
+    ? items.map((r,i)=>rowHtmlDone(r,i)).join('')
+    : `<div class="empty"><div class="empty-icon">🏆</div><p>Aún no hay reportes completados</p></div>`;
+}
+
+function renderInt(){
+  const itemsWithPct=intervenciones.map(r=>({...r,_pct:si('int',r.estado).pct}));
+  const items=sortItems(getFiltered(itemsWithPct,'srch-int','flt-ei','flt-ri'),sortInt);
+  renderStats(items,'stats-int','int');
+  document.getElementById('bdg-int').textContent=items.length;
+  document.getElementById('body-int').innerHTML=items.length
+    ? items.map((r,i)=>rowHtml(r,i,'int')).join('')
+    : `<div class="empty"><div class="empty-icon">🔧</div><p>No hay intervenciones</p></div>`;
+}
+
+// ── STATE PICKER ──
 let _spCtx=null;
 window.openStatePicker=function(type,id){
-  _spCtx={type,id}; const list=type==='rep'?reportes:intervenciones;
-  const item=list.find(r=>r.id===id); if(!item)return;
-  const statuses=getList(type); const container=document.getElementById('sp-list'); container.innerHTML='';
-  statuses.forEach(s=>{
-    const isCur=item.estado===s.key;
-    container.innerHTML+=`<div class="sp-item${isCur?' sp-current':''}" onclick="selectStatePicker('${s.key}')"><span class="estado-select ${s.cls}" style="padding:3px 10px;pointer-events:none">${s.label}</span><span style="font-size:11.5px;color:var(--muted);font-weight:600;margin-left:auto">${s.pct}%</span></div>`;
-  });
+  const list=type==='rep'?reportes:intervenciones;
+  const item=list.find(r=>r.id===id);if(!item)return;
+  _spCtx={type,id};
+  const curIdx=si(type,item.estado).idx;
+  document.getElementById('sp-list').innerHTML=getList(type).map((s,i)=>{
+    const isCur=i===curIdx,isDone=i<curIdx;
+    return `<div class="sp-item${isCur?' sp-current':''}" onclick="pickState('${s.key}')">
+      <span style="font-size:12px;width:16px;text-align:center;color:${isCur?'var(--accent)':isDone?'var(--success)':'var(--muted2)'}">${isCur?'◉':isDone?'✓':'○'}</span>
+      <span style="display:inline-flex;align-items:center;padding:3px 9px;border-radius:20px;font-size:11.5px;font-weight:700" class="${s.cls}">${s.label}</span>
+      <span style="font-size:11px;color:var(--muted)">${s.pct}%</span>
+      ${isCur?'<span style="font-size:11px;color:var(--accent);margin-left:auto">← actual</span>':''}
+    </div>`;
+  }).join('');
   openOv('ov-state');
 };
 
-window.selectStatePicker=async function(key){
-  if(!_spCtx)return; const{type,id}=_spCtx; _spCtx=null;
-  const list=type==='rep'?reportes:intervenciones; const item=list.find(r=>r.id===id);if(!item)return;
+window.pickState=async function(key){
+  if(!_spCtx)return;
+  const{type,id}=_spCtx; _spCtx=null;
+  const list=type==='rep'?reportes:intervenciones;
+  const item=list.find(r=>r.id===id);if(!item)return;
   const target=getList(type).find(s=>s.key===key);if(!target)return;
-  
   if(target.df&&!item[target.df]){
-    closeOv('ov-state'); _pending={type,id,next:target};
+    closeOv('ov-state');
+    _pending={type,id,next:target};
     document.getElementById('dp-title').textContent=`📅 ${target.label}`;
     document.getElementById('dp-desc').textContent=target.df==='fecha_ins_sol'?'¿En qué fecha solicitaste los insumos?':'¿En qué fecha recibiste los insumos?';
     document.getElementById('dp-date').value=new Date().toISOString().split('T')[0];
@@ -1124,166 +938,188 @@ window.selectStatePicker=async function(key){
   } else {
     const updated={...item,estado:key};
     if(key===REP_FINAL&&type==='rep') updated.completedAt=Date.now();
-    await saveItem(type,updated); closeOv('ov-state'); toast(`→ ${target.label}`);
-    if(key===REP_FINAL&&type==='rep'){
-      setTimeout(()=>{ toast('🏆 ¡Reporte movido a Completados!',3500); switchTab('rep-done'); },400);
-    }
+    await saveItem(type,updated);
+    closeOv('ov-state');
+    toast(`→ ${target.label}`);
+    if(key===REP_FINAL&&type==='rep'){ setTimeout(()=>{ toast('🏆 ¡Reporte movido a Completados!',3500); switchTab('rep-done'); },400); }
   }
 };
 
-// ── PROMPT DE FECHAS ──
+// ── DATE PROMPT ──
 let _pending=null;
 window.confirmDP=async function(){
-  if(!_pending)return; const val=document.getElementById('dp-date').value||null;
+  if(!_pending)return;
+  const val=document.getElementById('dp-date').value||null;
   const{type,id,next}=_pending; _pending=null;
-  const list=type==='rep'?reportes:intervenciones; const item=list.find(r=>r.id===id);if(!item)return;
-  const updated={...item,estado:next.key}; if(next.df&&val)updated[next.df]=val;
+  const list=type==='rep'?reportes:intervenciones;
+  const item=list.find(r=>r.id===id);if(!item)return;
+  const updated={...item,estado:next.key};
+  if(next.df&&val)updated[next.df]=val;
   if(next.key===REP_FINAL&&type==='rep') updated.completedAt=Date.now();
-  await saveItem(type,updated); closeOv('ov-date'); toast(`→ ${next.label}`);
+  await saveItem(type,updated);
+  closeOv('ov-date');
+  toast(`→ ${next.label}`);
   if(next.key===REP_FINAL&&type==='rep') setTimeout(()=>{ toast('🏆 ¡Reporte movido a Completados!',3500); switchTab('rep-done'); },400);
 };
-
 window.cancelDP=async function(){
   if(_pending){
     const{type,id,next}=_pending; _pending=null;
-    const list=type==='rep'?reportes:intervenciones; const item=list.find(r=>r.id===id);if(!item)return;
-    const updated={...item,estado:next.key}; if(next.key===REP_FINAL&&type==='rep') updated.completedAt=Date.now();
-    await saveItem(type,updated); toast(`→ ${next.label}`);
+    const list=type==='rep'?reportes:intervenciones;
+    const item=list.find(r=>r.id===id);if(!item)return;
+    const updated={...item,estado:next.key};
+    if(next.key===REP_FINAL&&type==='rep') updated.completedAt=Date.now();
+    await saveItem(type,updated);
+    toast(`→ ${next.label}`);
     if(next.key===REP_FINAL&&type==='rep') setTimeout(()=>switchTab('rep-done'),400);
   }
   closeOv('ov-date');
 };
 
-// ── MANEJO FORMULARIOS ──
+// ── DELETE ──
+window.deleteItem=async function(type,id){
+  if(!confirm('¿Eliminar este elemento?'))return;
+  await removeItem(type,id); toast('🗑 Eliminado');
+};
+
+// ── FORM ──
 let _fType='rep',_fId=null;
 window.openForm=function(type,id){
-  _fType=type;_fId=id||null; populateSelects();
-  const el=document.getElementById('f-estado'); el.innerHTML='';
+  _fType=type;_fId=id||null;
+  populateSelects();
+  const el=document.getElementById('f-estado');
+  el.innerHTML='';
   getList(type).forEach(s=>{const o=document.createElement('option');o.value=s.key;o.textContent=s.label;el.appendChild(o);});
   document.getElementById('f-tipo-wrap').style.display=type==='int'?'flex':'none';
-  const list=type==='rep'?reportes:intervenciones; const item=id?list.find(r=>r.id===id):null;
+  const list=type==='rep'?reportes:intervenciones;
+  const item=id?list.find(r=>r.id===id):null;
   document.getElementById('form-title').textContent=id?(type==='int'?'Editar Intervención':'Editar Reporte'):(type==='int'?'Nueva Intervención':'Nuevo Reporte');
-  
-  ['nombre','desc','notas','implementador','region','gerente','id-intervencion','tipo-reporte','categoria'].forEach(f=>{
-    const inputEl=document.getElementById('f-'+f); if(inputEl) inputEl.value=item?.[f.replace('-','_')]||'';
-  });
+  ['nombre','desc','notas','implementador','region','gerente','tipo-reporte','id-intervencion','categoria'].forEach(f=>{ const el=document.getElementById('f-'+f); if(el) el.value=item?.[f.replace('-','_')]||''; });
+  document.getElementById('f-id-intervencion').value=item?.id_intervencion||'';
+  document.getElementById('f-tipo-reporte').value=item?.tipo_reporte||'';
+  document.getElementById('f-categoria').value=item?.categoria||'';
   document.getElementById('f-responsable').value=item?.responsable||'';
-  document.getElementById('f-estado').value=item?.estado||getList(type)[0].key;
+  document.getElementById('f-tipo').value=item?.tipo||'Individual';
+  document.getElementById('f-estado').value=item?.estado||'no-iniciado';
   document.getElementById('f-fecha').value=item?.fecha||'';
   openOv('ov-form');
 };
 
 window.saveForm=async function(){
-  const n=document.getElementById('f-nombre').value.trim(); if(!n){toast('⚠ Nombre obligatorio');return;}
-  const payload={
-    id:_fId||uid(), nombre:n,
-    desc:document.getElementById('f-desc').value.trim(),
-    responsable:document.getElementById('f-responsable').value,
-    estado:document.getElementById('f-estado').value,
-    fecha:document.getElementById('f-fecha').value||null,
-    notas:document.getElementById('f-notas').value.trim(),
-    implementador:document.getElementById('f-implementador').value.trim(),
-    region:document.getElementById('f-region').value.trim(),
-    gerente:document.getElementById('f-gerente').value.trim()
+  const nombre=document.getElementById('f-nombre').value.trim();
+  if(!nombre){toast('⚠ El nombre es requerido');return;}
+  const resp=document.getElementById('f-responsable').value;
+  if(!resp){toast('⚠ Selecciona un responsable');return;}
+  const list=_fType==='rep'?reportes:intervenciones;
+  const existing=_fId?list.find(r=>r.id===_fId):null;
+  const gv=id=>(document.getElementById(id)?.value||'').trim();
+
+  const implementador=gv('f-implementador');
+  const region=gv('f-region');
+  const gerente=gv('f-gerente');
+  const categoria=gv('f-categoria');
+  const id_intervencion=gv('f-id-intervencion');
+
+  const item={
+    id:_fId||uid(),
+    nombre,
+    desc:gv('f-desc'),
+    responsable:resp,
+    tipo:gv('f-tipo'),
+    estado:gv('f-estado')||'no-iniciado',
+    fecha:gv('f-fecha'),
+    notas:gv('f-notas'),
+    implementador, region, gerente,
+    id_intervencion,
+    tipo_reporte:gv('f-tipo-reporte'),
+    categoria,
+    fecha_ins_sol:existing?.fecha_ins_sol||null,
+    fecha_ins_rec:existing?.fecha_ins_rec||null,
+    completedAt:existing?.completedAt||null,
   };
-  if(_fType==='rep'){
-    payload.id_intervencion=document.getElementById('f-id-intervencion').value.trim();
-    payload.tipo_reporte=document.getElementById('f-tipo-reporte').value.trim();
-    payload.categoria=document.getElementById('f-categoria').value.trim();
-  } else {
-    payload.tipo=document.getElementById('f-tipo').value;
-  }
-  if(!_fId && _fType==='rep' && payload.estado===REP_FINAL) payload.completedAt=Date.now();
-  await saveItem(_fType,payload); closeOv('ov-form'); toast('💾 Guardado correctamente');
-};
+  await saveItem(_fType,item);
 
-window.editItem=function(type,id){ openForm(type,id); };
-window.deleteItem=async function(type,id){ if(confirm('¿Eliminar de forma permanente?')){ await removeItem(type,id); toast('🗑 Eliminado'); } };
-
-// ── GESTIÓN DE EQUIPO ──
-window.openSettings=function(){ openOv('ov-settings'); };
-function renderMembersSettings(){
-  const container=document.getElementById('settings-members-list'); container.innerHTML='';
-  if(!members.length){container.innerHTML='<p style="font-size:12px;color:var(--muted);padding:8px 0;text-align:center">No hay integrantes.</p>';return;}
-  members.forEach((m,i)=>container.innerHTML+=`<div class="set-row"><input type="text" class="nm-edit" value="${m}" onchange="updateMemberName(${i},this.value)"> <button class="icon-btn" onclick="deleteMember(${i})" style="color:var(--danger)">🗑</button></div>`);
-}
-window.addTeamMember=async function(){
-  const el=document.getElementById('new-member-name'); const n=el.value.trim();if(!n)return;
-  if(members.includes(n)){toast('⚠ Ya existe');return;} members.push(n); el.value=''; await saveMembers(members); toast('👥 Añadido');
-};
-window.updateMemberName=async function(i,val){ const v=val.trim();if(!v)return; members[i]=v; await saveMembers(members); };
-window.deleteMember=async function(i){ if(confirm(`¿Quitar a ${members[i]}?`)){ members.splice(i,1); await saveMembers(members); } };
-
-// ── SELECCIÓN MÚLTIPLE Y PROCESAMIENTO BULK ──
-const selRep=new Set(), selInt=new Set();
-function updateBulkBar(type){
-  const sel=type==='rep'?selRep:selInt; const bar=document.getElementById('bulk-bar-'+type); const cnt=document.getElementById('bulk-count-'+type);
-  if(sel.size>0){ bar.classList.add('visible'); cnt.textContent=`${sel.size} seleccionados`; }
-  else { bar.classList.remove('visible'); const cbAll=document.getElementById('cb-all-'+type); if(cbAll) cbAll.checked=false; }
-}
-window.onRowCb=function(type,id,checked){ const sel=type==='rep'?selRep:selInt; checked ? sel.add(id) : sel.delete(id); updateBulkBar(type); };
-window.toggleAllRep=function(cbEl){
-  selRep.clear(); if(cbEl.checked) getFilteredReps().filter(r=>r.estado!==REP_FINAL).forEach(r=>selRep.add(r.id));
-  document.querySelectorAll('#body-rep .row-cb').forEach(cb=>cb.checked=cbEl.checked); updateBulkBar('rep');
-};
-window.toggleAllInt=function(cbEl){
-  selInt.clear(); if(cbEl.checked) intervenciones.filter(r=>r.estado!==INT_FINAL).forEach(r=>selInt.add(r.id));
-  document.querySelectorAll('#body-int .row-cb').forEach(cb=>cb.checked=cbEl.checked); updateBulkBar('int');
-};
-window.selectAllRep=function(){ getFilteredReps().filter(r=>r.estado!==REP_FINAL).forEach(r=>selRep.add(r.id)); document.querySelectorAll('#body-rep .row-cb').forEach(cb=>cb.checked=true); const ca=document.getElementById('cb-all-rep');if(ca)ca.checked=true; updateBulkBar('rep'); };
-window.selectAllInt=function(){ intervenciones.filter(r=>r.estado!==INT_FINAL).forEach(r=>selInt.add(r.id)); document.querySelectorAll('#body-int .row-cb').forEach(cb=>cb.checked=true); const ca=document.getElementById('cb-all-int');if(ca)ca.checked=true; updateBulkBar('int'); };
-window.clearSelRep=function(){ selRep.clear(); document.querySelectorAll('#body-rep .row-cb').forEach(cb=>cb.checked=false); updateBulkBar('rep'); };
-window.clearSelInt=function(){ selInt.clear(); document.querySelectorAll('#pane-int .row-cb').forEach(cb=>cb.checked=false); updateBulkBar('int'); };
-window.bulkDeleteRep=async function(){
-  if(!selRep.size||!confirm('¿Eliminar seleccionados?'))return; const ids=[...selRep]; selRep.clear(); updateBulkBar('rep');
-  for(const id of ids) await removeItem('rep',id); toast('🗑 Eliminados');
-};
-window.bulkDeleteInt=async function(){
-  if(!selInt.size||!confirm('¿Eliminar seleccionados?'))return; const ids=[...selInt]; selInt.clear(); updateBulkBar('int');
-  for(const id of ids) await removeItem('int',id); toast('🗑 Eliminados');
-};
-
-// ── PARSEO DE EXCEL E IMPORTACIÓN INTELIGENTE ──
-let _excelRows=[], _lastHeaders=[], _lastRawData=[];
-function setupExcelDropzone(){
-  const dz=document.getElementById('excel-drop'); if(!dz)return;
-  dz.addEventListener('click',()=>document.getElementById('excel-file').click());
-}
-window.handleExcelFile=function(e){const f=e.target.files[0];if(f)processExcelFile(f);};
-
-function processExcelFile(file){
-  const reader=new FileReader();
-  reader.onload=function(e){
-    const data=new Uint8Array(e.target.result); const workbook=XLSX.read(data,{type:'array',cellDates:true});
-    const sheetName=workbook.SheetNames[0]; const sheet=workbook.Sheets[sheetName];
-    const raw=XLSX.utils.sheet_to_json(sheet,{header:1,defval:''}); if(!raw.length){toast('⚠ Documento vacío');return;}
-    
-    _lastHeaders=raw[0].map(h=>h?h.toString().trim():'');
-    _lastRawData=raw.slice(1);
-    const map=mapColumns(_lastHeaders);
-    
-    if(!map.hasOwnProperty('nombre')){
-      document.getElementById('manual-col-selector').style.display='block';
-      const sel=document.getElementById('manual-nombre-col'); sel.innerHTML='<option value="">-- Seleccionar columna --</option>';
-      _lastHeaders.forEach((h,idx)=>sel.appendChild(new Option(h||`Columna ${idx+1}`,idx)));
-      document.getElementById('excel-preview-wrap').style.display='none';
-      return;
+  // ── Sync shared fields to all siblings with same id_intervencion ──
+  if(_fId && id_intervencion){
+    const siblings=list.filter(r=>
+      r.id!==_fId &&
+      r.id_intervencion &&
+      r.id_intervencion.trim().toLowerCase()===id_intervencion.trim().toLowerCase()
+    );
+    if(siblings.length>0){
+      let syncCount=0;
+      for(const sib of siblings){
+        const changed=
+          sib.implementador!==implementador ||
+          sib.region!==region ||
+          sib.gerente!==gerente ||
+          sib.categoria!==categoria;
+        if(changed){
+          await saveItem(_fType,{...sib, implementador, region, gerente, categoria});
+          syncCount++;
+        }
+      }
+      if(syncCount>0){
+        toast(`✅ Guardado — ${syncCount} reporte${syncCount===1?'':'s'} hermano${syncCount===1?'':'s'} sincronizado${syncCount===1?'':'s'} 🔗`);
+        closeOv('ov-form');
+        return;
+      }
     }
-    document.getElementById('manual-col-selector').style.display='none';
-    const rows=_lastRawData.filter(cols=>cols.some(v=>v!==null&&v!==undefined&&v.toString().trim()!='')).map(cols=>buildRow(cols,map)).filter(r=>r.nombre&&r.nombre.trim().length>0);
-    if(!rows.length){toast('⚠ No se estructuraron filas válidas');return;}
-    showExcelPreview(rows);
-  };
-  reader.readAsArrayBuffer(file);
-}
+  }
 
-window.applyManualColumnMap=function(){
-  const sel=document.getElementById('manual-nombre-col'); if(!sel||sel.value==='') {toast('⚠ Selecciona la columna de Nombre');return;}
-  const nombreIdx=parseInt(sel.value); const forcedColMap={nombre:nombreIdx};
+  closeOv('ov-form');
+  toast(_fId?'✅ Guardado':'✅ Creado — sincronizado');
+};
+window.editItem=function(type,id){window.openForm(type,id);};
+
+// ── SETTINGS ──
+window.openSettings=function(){renderSettingsMembers();openOv('ov-settings');};
+function renderSettingsMembers(){
+  document.getElementById('settings-members').innerHTML=members.map((m,i)=>`
+    <div class="set-row">
+      <div style="display:flex;align-items:center;gap:8px;flex-shrink:0">
+        <div class="av av${i%4}" style="width:24px;height:24px;font-size:9px">${initials(m)}</div>
+        <span style="font-size:11px;color:var(--muted);font-weight:700;min-width:64px">Miembro ${i+1}</span>
+      </div>
+      <input class="nm-edit" id="mem-${i}" value="${m.replace(/"/g,'&quot;')}" placeholder="Nombre...">
+      ${members.length>1?`<button class="btn btn-ghost btn-sm" onclick="removeMember(${i})" style="color:var(--danger);flex-shrink:0">✕</button>`:''}
+    </div>`).join('');
+}
+window.saveSettings=async function(){
+  const names=[...document.querySelectorAll('.nm-edit')].map((inp,i)=>inp.value.trim()||members[i]);
+  await saveMembers(names); closeOv('ov-settings'); toast('👥 Equipo actualizado para todos');
+};
+window.addMember=async function(){
+  const inp=document.getElementById('new-mem');
+  const name=inp.value.trim();if(!name){toast('⚠ Escribe un nombre');return;}
+  members=[...members,name];
+  await saveMembers([...members]);
+  inp.value=''; populateSelects(); renderSettingsMembers();
+  toast(`👤 ${name} agregado`);
+};
+window.removeMember=function(idx){
+  if(members.length<=1){toast('⚠ Debe haber al menos un miembro');return;}
+  members=members.filter((_,i)=>i!==idx);
+  saveMembers([...members]); populateSelects(); renderSettingsMembers();
+};
+
+// ── EXCEL IMPORT ──
+// Store last parsed data for manual remapping
+let _lastHeaders=[], _lastRawData=[];
+
+window.applyManualMap=function(){
+  const sel=document.getElementById('manual-nombre-col');
+  if(!sel||sel.value===''){toast('⚠ Selecciona la columna de Nombre');return;}
+  const nombreIdx=parseInt(sel.value);
+  // Force map nombre to selected column
+  const forcedColMap={nombre:nombreIdx};
+  // Keep existing detections for other fields
   const autoMap=mapColumns(_lastHeaders);
   Object.entries(autoMap).forEach(([f,i])=>{if(f!=='nombre')forcedColMap[f]=i;});
-  const rows=_lastRawData.filter(cols=>cols.some(v=>v!==null&&v!==undefined&&v.toString().trim()!='')).map(cols=>buildRow(cols,forcedColMap)).filter(r=>r.nombre&&r.nombre.trim().length>0);
-  if(!rows.length){toast('⚠ No hay filas válidas con esa columna');return;}
+  const rows=_lastRawData
+    .filter(cols=>cols.some(v=>v!==null&&v!==undefined&&v.toString().trim()!=''))
+    .map(cols=>buildRow(cols,forcedColMap))
+    .filter(r=>r.nombre&&r.nombre.trim().length>0);
+  if(!rows.length){toast('⚠ Aún no hay filas válidas con esa columna');return;}
   showExcelPreview(rows);
 };
 
@@ -1293,107 +1129,520 @@ window.openExcelImport=function(){
   document.getElementById('excel-file').value='';
   document.getElementById('excel-summary').textContent='';
   document.getElementById('excel-preview').innerHTML='';
-  _excelRows=[]; openOv('ov-excel');
+  _excelRows=[];
+  openOv('ov-excel');
 };
 window.closeExcelImport=function(){ closeOv('ov-excel'); };
 
+// Drag & drop
 const dz=document.getElementById('excel-drop');
 dz.addEventListener('dragover',e=>{e.preventDefault();dz.classList.add('drag-over');});
 dz.addEventListener('dragleave',()=>dz.classList.remove('drag-over'));
 dz.addEventListener('drop',e=>{e.preventDefault();dz.classList.remove('drag-over');const f=e.dataTransfer.files[0];if(f)processExcelFile(f);});
 
-function normalizeKey(k){ if(!k) return ''; return k.toString().toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g,'').replace(/[^a-z0-9\s]/g,'').trim().replace(/\s+/g,''); }
+window.handleExcelFile=function(e){const f=e.target.files[0];if(f)processExcelFile(f);};
+
+function normalizeKey(k){
+  if(!k) return '';
+  return k.toString()
+    .toLowerCase()
+    .normalize('NFD')
+    .replace(/[\u0300-\u036f]/g,'')  // remove accents: á→a, é→e, ó→o, ú→u, ñ→n
+    .replace(/[^a-z0-9\s]/g,'')       // remove special chars but keep spaces
+    .trim()
+    .replace(/\s+/g,'');              // remove all spaces
+}
+
 const COL_MAP={
-  id_intervencion:['intervencioniddelaintervencion','iddelaintervencion','iddelaintervencin','idintervencin','idintervencion','idintervenc','interventionid','idreporte'],
-  nombre:['intervencioninterventionname','nombre','name','interventionname','titulo','title','nombredelreporte','reportingname','reportingmilestonesreportingmilestonesname','reportingmilestonesname'],
-  tipo_reporte:['reportingmilestonesreportingmilestonesname','reportingmilestonesname','milestonesname','milestonename','tipodereporte','tipodereprote','tiporeporte','tipo','type','typeofreport','reporttype'],
-  estado_excel:['estatus','estados','estado','status','estadoinicial','estado1'],
-  fecha:['fechalimite','fecha','fechas','fechaenvio','fechaenviado','fechaenvioconnect','fechaconect','connect','fechadeenvio','fechadefinalizacion','fechafinalizacion','fechafinal','fechalate','fechalte','duedate','due','enddate','deadline','date','targetdate','vencimiento','fechavencimiento'],
-  categoria:['intervencioncategoria','categoria','category','categora','cat'],
-  implementador:['implementador','implementadorresponsable','socio','partner'],
-  region:['region','regin','location','cobertura'],
-  gerente:['gerentedelimplementador','gerente']
+  id_intervencion:[
+    // Exact from your file: "Intervención: ID de la Intervención"
+    'intervencioniddelaintervencion',
+    // Other variants
+    'iddelaintervencion','iddelaintervencin','idintervencin',
+    'idintervencion','idintervenc','interventionid','idreporte',
+  ],
+  nombre:[
+    // Exact from your file: "Intervención: Intervention Name"
+    'intervencioninterventionname',
+    // Other variants
+    'nombre','name','interventionname','titulo','title',
+    'nombredelreporte','reportingname',
+    // Old: "Reporting Milestones: Reporting Milestones Name"
+    'reportingmilestonesreportingmilestonesname','reportingmilestonesname',
+  ],
+  tipo_reporte:[
+    // Exact from your file: "Reporting Milestones: Reporting Milestones Name"
+    'reportingmilestonesreportingmilestonesname',
+    'reportingmilestonesname','milestonesname','milestonename',
+    // Standard
+    'tipodereporte','tipodereprote','tiporeporte','tipo','type',
+    'typeofreport','reporttype',
+  ],
+  estado_excel:[
+    // Exact from your file: "Estatus"
+    'estatus',
+    // Other variants
+    'estados','estado','status','estadoinicial','estado1','estad',
+  ],
+  fecha:[
+    // Exact from your file: "Fecha Límite"
+    'fechalimite','fechalimite',
+    // Other variants
+    'fecha','fechas','fechaenvio','fechaenviado','fechaenvioconnect',
+    'fechaconect','connect','fechadeenvio',
+    'fechadefinalizacion','fechafinalizacion','fechafinal',
+    'fechalate','fechalte','duedate','due','enddate','deadline',
+    'date','targetdate','vencimiento','fechavencimiento',
+  ],
+  categoria:[
+    // Exact from your file: "Intervención: Categoría"
+    'intervencioncategoria',
+    // Other variants
+    'categoria','category','categora','cat','categorias','categ',
+  ],
+  desc:['descripcion','description','desc','detalle'],
+  responsable:['responsable','responsible','encargado','asignado'],
+  implementador:['implementador','implementer'],
+  region:['region','zona','area'],
+  gerente:['gerente','manager'],
+  notas:['notas','notes','observaciones','comentarios'],
 };
 
 function mapColumns(headers){
-  const mapped={};
-  headers.forEach((h,idx)=>{
-    const norm=normalizeKey(h); if(!norm)return;
-    for(const[field,aliases] of Object.entries(COL_MAP)){
-      if(!mapped.hasOwnProperty(field)&&aliases.includes(norm)){mapped[field]=idx;break;}
+  const map={};
+  headers.forEach((h,i)=>{
+    const nk=normalizeKey(h);
+    for(const[field,aliases]of Object.entries(COL_MAP)){
+      if(aliases.includes(nk)&&map[field]===undefined){ map[field]=i; break; }
     }
   });
-  return mapped;
+  return map;
 }
 
-function buildRow(cols,map){
-  const r={};
-  Object.entries(map).forEach(([field,idx])=>{
-    let val=cols[idx]; if(val===undefined||val===null)val='';
-    if(val instanceof Date){ r[field]=val.toISOString().split('T')[0]; }
-    else{ r[field]=val.toString().trim(); }
-  });
-  if(r.fecha && r.fecha.includes('/')){const p=r.fecha.split('/');if(p.length===3)r.fecha=`${p[2]}-${p[1].padStart(2,'0')}-${p[0].padStart(2,'0')}`;}
-  return r;
+function parseExcelDate(val){
+  if(!val)return'';
+  if(typeof val==='number'){
+    const d=new Date(Math.round((val-25569)*86400*1000));
+    return d.toISOString().split('T')[0];
+  }
+  const s=val.toString().trim();
+  // yyyy-mm-dd
+  const m0=s.match(/^(\d{4})[\/-](\d{1,2})[\/-](\d{1,2})$/);
+  if(m0)return`${m0[1]}-${m0[2].padStart(2,'0')}-${m0[3].padStart(2,'0')}`;
+  // M/D/YYYY or MM/DD/YYYY (American format like 1/31/2026)
+  const m1=s.match(/^(\d{1,2})[\/](\d{1,2})[\/](\d{4})$/);
+  if(m1){
+    const mo=parseInt(m1[1]),dy=parseInt(m1[2]),yr=parseInt(m1[3]);
+    // If month > 12 it must be day-first (dd/mm/yyyy), otherwise assume mm/dd/yyyy
+    if(mo>12) return`${yr}-${m1[2].padStart(2,'0')}-${m1[1].padStart(2,'0')}`;
+    return`${yr}-${m1[1].padStart(2,'0')}-${m1[2].padStart(2,'0')}`;
+  }
+  // dd/mm/yy or mm/dd/yy
+  const m2=s.match(/^(\d{1,2})[\/\-](\d{1,2})[\/\-](\d{2})$/);
+  if(m2)return`20${m2[3]}-${m2[1].padStart(2,'0')}-${m2[2].padStart(2,'0')}`;
+  return'';
 }
 
-function matchEstadoExcel(str){
-  if(!str) return REP_STATUSES[0].key; const n=normalizeKey(str);
-  if(n.includes('noiniciado')||n.includes('pendiente'))return'no-iniciado';
-  if(n.includes('solicitado'))return'ins-sol';
-  if(n.includes('recibido'))return'ins-rec';
-  if(n.includes('borrador'))return'borrador';
-  if(n.includes('coordinacion')||n.includes('revision'))return'rev-coor';
-  if(n.includes('subido')||n.includes('connect'))return'subido-connect';
-  if(n.includes('aprobado')||n.includes('finalizado')||n.includes('cindi')||n.includes('region'))return'aprobado-cindi';
-  return REP_STATUSES[0].key;
+function processExcelFile(file){
+  const reader=new FileReader();
+  reader.onload=e=>{
+    try{
+      let rows=[];
+      let headers=[];
+      let colMap={};
+
+      if(file.name.endsWith('.csv')){
+        const text=new TextDecoder('utf-8').decode(e.target.result);
+        const lines=text.split('\n').filter(l=>l.trim());
+        headers=lines[0].split(',').map(h=>h.replace(/^"|"$/g,'').trim());
+        colMap=mapColumns(headers);
+        _lastHeaders=headers;
+        rows=lines.slice(1).map(line=>{
+          const cols=line.split(',').map(cv=>cv.replace(/^"|"$/g,'').trim());
+          return buildRow(cols,colMap);
+        }).filter(r=>r.nombre&&r.nombre.trim().length>0);
+      } else {
+        // Detect if file is HTML disguised as XLS (common export from web platforms)
+        const uint8=new Uint8Array(e.target.result);
+        const firstChunk=new TextDecoder('iso-8859-1').decode(uint8.slice(0,300));
+        const isHtmlXls=/<html|<table|<head|<th /i.test(firstChunk);
+
+        let data=[];
+        if(isHtmlXls){
+          // Parse entire file as HTML table
+          const htmlText=new TextDecoder('iso-8859-1').decode(uint8);
+          const parser=new DOMParser();
+          const doc=parser.parseFromString(htmlText,'text/html');
+          const rows2=doc.querySelectorAll('tr');
+          rows2.forEach(row=>{
+            const cells=row.querySelectorAll('th,td');
+            if(cells.length>0) data.push([...cells].map(cell=>cell.textContent.trim()));
+          });
+        } else {
+          const wb=XLSX.read(e.target.result,{type:'array',codepage:65001});
+          for(const shName of wb.SheetNames){
+            const d=XLSX.utils.sheet_to_json(wb.Sheets[shName],{header:1,defval:''});
+            if(d.length>=2&&d[0].some(h=>h&&h.toString().trim())){data=d;break;}
+          }
+        }
+        if(data.length<2){toast('⚠ El archivo está vacío o no tiene datos');return;}
+        headers=data[0].map(h=>(h||'').toString().replace(/<[^>]+>/g,'').trim());
+        colMap=mapColumns(headers);
+        _lastHeaders=headers;
+        _lastRawData=data.slice(1);
+        rows=data.slice(1)
+          .filter(cols=>cols.some(v=>v!==null&&v!==undefined&&v.toString().trim()!=''))
+          .map(cols=>buildRow(cols,colMap))
+          .filter(r=>r.nombre&&r.nombre.trim().length>0);
+      }
+
+      if(!rows.length){
+        // Show diagnostic: which headers were detected and which weren't
+        const headerList=headers.map((h,i)=>{
+          const matched=Object.entries(colMap).find(([f,idx])=>idx===i);
+          const norm=normalizeKey(h);
+          return `<li style="padding:4px 0;border-bottom:1px solid #f3f4f6">
+            <code style="background:#f3f4f6;padding:1px 6px;border-radius:3px;font-size:11px">${h}</code>
+            <span style="font-size:10px;color:var(--muted2);margin:0 4px">→ normalizado: "${norm}"</span>
+            <span style="color:${matched?'#15803d':'#dc2626'};font-weight:700;font-size:11px">${matched?'✓ reconocida como: '+matched[0]:'✗ no reconocida'}</span>
+          </li>`;
+        }).join('');
+        document.getElementById('excel-preview').innerHTML=`
+          <div style="padding:16px">
+            <p style="font-weight:700;color:#dc2626;margin-bottom:10px">⚠ No se encontraron filas válidas</p>
+            <p style="font-size:12px;color:var(--muted);margin-bottom:8px">Columnas detectadas en tu archivo (${headers.length} columnas):</p>
+            <ul style="font-size:12px;list-style:none;padding:0;margin:0">${headerList}</ul>
+            <p style="font-size:11px;color:var(--muted);margin-top:12px;padding-top:10px;border-top:1px solid var(--border)">
+              La columna <strong>Nombre</strong> es obligatoria. Usa el mapeo manual abajo si alguna columna no se reconoce.
+            </p>
+            <div style="margin-top:12px">
+              <p style="font-size:11px;font-weight:700;color:var(--text);margin-bottom:8px">🔧 Mapeo manual — ¿cuál columna es el Nombre?</p>
+              <div style="display:flex;align-items:center;gap:8px;flex-wrap:wrap">
+                <label style="font-size:12px;color:var(--muted)">Columna Nombre:</label>
+                <select id="manual-nombre-col" style="background:var(--surface2);border:1px solid var(--border2);border-radius:6px;padding:5px 8px;font-size:12px;font-family:var(--font);outline:none">
+                  <option value="">— seleccionar —</option>
+                </select>
+                <button onclick="applyManualMap()" style="background:var(--accent);color:#fff;border:none;border-radius:6px;padding:5px 12px;font-size:12px;font-weight:600;cursor:pointer;font-family:var(--font)">Aplicar</button>
+              </div>
+            </div>
+          </div>`;
+        // Show debug in error case too
+        const debugRowsErr = headers.map((h,i)=>{
+          const norm = normalizeKey(h);
+          const matched = Object.entries(colMap).find(([f,idx2])=>idx2===i);
+          return `<tr>
+            <td style="padding:4px 8px;border-bottom:1px solid #f3f4f6;font-size:11px;font-family:monospace">${h}</td>
+            <td style="padding:4px 8px;border-bottom:1px solid #f3f4f6;font-size:10px;color:#9ca3af">${norm}</td>
+            <td style="padding:4px 8px;border-bottom:1px solid #f3f4f6;font-size:11px;font-weight:700;color:${matched?'#15803d':'#dc2626'}">${matched?'✓ '+matched[0]:'✗ no reconocida'}</td>
+          </tr>`;
+        }).join('');
+        const dbEl=document.getElementById('col-debug');
+        if(dbEl) dbEl.innerHTML=`<table style="width:100%;border-collapse:collapse;margin-bottom:12px;background:#fafafa;border-radius:8px;overflow:hidden">
+          <thead><tr>
+            <th style="padding:6px 8px;text-align:left;font-size:10px;color:var(--muted);background:#f3f4f6">Columna en Excel</th>
+            <th style="padding:6px 8px;text-align:left;font-size:10px;color:var(--muted);background:#f3f4f6">Normalizado</th>
+            <th style="padding:6px 8px;text-align:left;font-size:10px;color:var(--muted);background:#f3f4f6">Campo detectado</th>
+          </tr></thead><tbody>${debugRowsErr}</tbody></table>`;
+        document.getElementById('excel-preview-wrap').style.display='block';
+        const sel=document.getElementById('manual-nombre-col');
+        if(sel){ headers.forEach((h,i)=>{ const o=document.createElement('option'); o.value=i; o.textContent=h; sel.appendChild(o); }); }
+        return;
+      }
+      // Show column mapping debug before preview
+      const debugRows = headers.map((h,i)=>{
+        const norm = normalizeKey(h);
+        const matched = Object.entries(colMap).find(([f,idx])=>idx===i);
+        return `<tr>
+          <td style="padding:4px 8px;border-bottom:1px solid #f3f4f6;font-size:11px;font-family:monospace">${h}</td>
+          <td style="padding:4px 8px;border-bottom:1px solid #f3f4f6;font-size:10px;color:#9ca3af">${norm}</td>
+          <td style="padding:4px 8px;border-bottom:1px solid #f3f4f6;font-size:11px;font-weight:700;color:${matched?'#15803d':'#dc2626'}">${matched?'✓ '+matched[0]:'✗ no reconocida'}</td>
+        </tr>`;
+      }).join('');
+      document.getElementById('col-debug').innerHTML=`
+        <details style="margin-bottom:12px">
+          <summary style="cursor:pointer;font-size:12px;font-weight:700;color:var(--muted);padding:6px 0">
+            🔍 Ver columnas detectadas (${headers.length} columnas)
+          </summary>
+          <table style="width:100%;border-collapse:collapse;margin-top:8px;background:#fafafa;border-radius:8px;overflow:hidden">
+            <thead><tr>
+              <th style="padding:6px 8px;text-align:left;font-size:10px;color:var(--muted);background:#f3f4f6">Columna en Excel</th>
+              <th style="padding:6px 8px;text-align:left;font-size:10px;color:var(--muted);background:#f3f4f6">Normalizado</th>
+              <th style="padding:6px 8px;text-align:left;font-size:10px;color:var(--muted);background:#f3f4f6">Campo detectado</th>
+            </tr></thead>
+            <tbody>${debugRows}</tbody>
+          </table>
+        </details>`;
+      document.getElementById('excel-preview-wrap').style.display='block';
+      showExcelPreview(rows);
+    }catch(err){console.error(err);toast('⚠ Error al leer el archivo: '+err.message);}
+  };
+  reader.readAsArrayBuffer(file);
+}
+
+function buildRow(cols,colMap){
+  const g=i=>(i!==undefined&&cols[i]!==undefined&&cols[i]!==null)?cols[i].toString().trim():'';
+  // Map "Draft" -> no-iniciado, anything else keep as-is for reference
+  const estadoRaw=g(colMap.estado_excel).toLowerCase();
+  const estadoMapped=estadoRaw==='draft'||estadoRaw===''?'no-iniciado':'no-iniciado';
+  return{
+    id_intervencion:g(colMap.id_intervencion),
+    nombre:g(colMap.nombre),
+    tipo_reporte:g(colMap.tipo_reporte),
+    categoria:g(colMap.categoria),
+    estado_excel:estadoRaw,
+    estado_mapped:estadoMapped,
+    fecha:parseExcelDate(colMap.fecha!==undefined?cols[colMap.fecha]:''),
+    desc:g(colMap.desc),
+    responsable:g(colMap.responsable),
+    implementador:g(colMap.implementador),
+    region:g(colMap.region),
+    gerente:g(colMap.gerente),
+    notas:g(colMap.notas),
+  };
 }
 
 function showExcelPreview(rows){
-  _excelRows=rows;
-  const th=document.getElementById('excel-preview-th'); th.innerHTML='<th>Estado</th><th>Nombre del Reporte</th><th>Fecha Límite</th><th>ID Intervención</th><th>Socio / Implementador</th>';
-  const tbody=document.getElementById('excel-preview-tbody'); tbody.innerHTML='';
-  let nuevos=0,dups=0;
-  
-  rows.forEach(r=>{
-    const existe=reportes.some(existItem=>existItem.nombre.toLowerCase()===r.nombre.toLowerCase());
-    if(existe)dups++; else nuevos++;
-    const cls=existe?'dup-row':'new-row';
-    tbody.innerHTML+=`<tr class="${cls}"><td><strong>${existe?'Omitido (Duplicado)':'Nuevo'}</strong></td><td>${r.nombre}</td><td>${r.fecha||'—'}</td><td>${r.id_intervencion||'—'}</td><td>${r.implementador||'—'}</td></tr>`;
+  // Build lookup structures for all existing records
+  const exIdTipo = new Set(reportes
+    .filter(r=>r.id_intervencion&&r.tipo_reporte)
+    .map(r=>r.id_intervencion.trim().toLowerCase()+'||'+r.tipo_reporte.trim().toLowerCase()));
+  const exNomTipo = new Set(reportes
+    .filter(r=>r.nombre&&r.tipo_reporte)
+    .map(r=>r.nombre.trim().toLowerCase()+'||'+r.tipo_reporte.trim().toLowerCase()));
+  // For old records with only nombre (no ID, no tipo) — stored as plain names
+  const exNombreSolo = new Set(reportes
+    .filter(r=>!r.id_intervencion&&!r.tipo_reporte&&r.nombre)
+    .map(r=>r.nombre.trim().toLowerCase()));
+  // For old records with nombre+tipo
+  const exNombreConTipo = new Set(reportes
+    .filter(r=>!r.id_intervencion&&r.tipo_reporte&&r.nombre)
+    .map(r=>r.nombre.trim().toLowerCase()+'||'+r.tipo_reporte.trim().toLowerCase()));
+
+  _excelRows=rows.map(r=>{
+    const id=(r.id_intervencion||'').trim().toLowerCase();
+    const t =(r.tipo_reporte||'').trim().toLowerCase();
+    const n =(r.nombre||'').trim().toLowerCase();
+
+    // 1. Exact ID + tipo match (best case — new imports)
+    if(id&&t&&exIdTipo.has(id+'||'+t)) return{...r,_isNew:false};
+
+    // 2. Exact nombre + tipo match
+    if(n&&t&&exNomTipo.has(n+'||'+t)) return{...r,_isNew:false};
+    if(n&&t&&exNombreConTipo.has(n+'||'+t)) return{...r,_isNew:false};
+
+    // 3. Old record: nombre only (no ID, no tipo saved before)
+    // The Excel "nombre" field contains the intervention name
+    // Old records were saved with that same name as "nombre"
+    // So: if this excel row's nombre matches an old nombre-only record → duplicate
+    if(exNombreSolo.has(n)) return{...r,_isNew:false};
+
+    // 4. Substring match for old records that may have been saved with slightly different name
+    // (e.g. trimmed or truncated)
+    const fuzzyMatch=[...exNombreSolo].some(en=>
+      en.length>10&&(en===n||n.startsWith(en.slice(0,30))||en.startsWith(n.slice(0,30)))
+    );
+    if(fuzzyMatch) return{...r,_isNew:false};
+
+    return{...r,_isNew:true};
   });
-  
-  document.getElementById('excel-summary').textContent=`📊 Resumen: ${nuevos} reportes nuevos listos para importar, ${dups} ya existentes en el sistema que serán omitidos.`;
+  const newCount=_excelRows.filter(r=>r._isNew).length;
+  const dupCount=_excelRows.length-newCount;
+
+  document.getElementById('excel-preview').innerHTML=`
+    <table>
+      <thead><tr><th>ID</th><th>Nombre</th><th>Tipo</th><th>Categoría</th><th>Fecha</th><th>Estado Excel</th><th></th></tr></thead>
+      <tbody>${_excelRows.map(r=>`
+        <tr class="${r._isNew?'new-row':'dup-row'}">
+          <td style="color:var(--muted);font-size:11px">${r.id_intervencion||'—'}</td>
+          <td><strong>${r.nombre}</strong></td>
+          <td>${r.tipo_reporte||'—'}</td>
+          <td>${r.categoria||'—'}</td>
+          <td>${r.fecha?fmt(r.fecha):'—'}</td>
+          <td><span style="font-size:11px;color:var(--muted)">${r.estado_excel||'draft'}</span></td>
+          <td>${r._isNew?'<span style="color:#15803d;font-weight:700">✚ Nuevo</span>':'<span style="color:#9ca3af">Ya existe</span>'}</td>
+        </tr>`).join('')}
+      </tbody>
+    </table>`;
+  document.getElementById('excel-summary').textContent=`${newCount} reporte${newCount===1?'':'s'} nuevo${newCount===1?'':'s'} · ${dupCount} ya existe${dupCount===1?'':'n'} (se omiten)`;
   document.getElementById('excel-preview-wrap').style.display='block';
-  document.getElementById('excel-confirm-btn').style.display=nuevos>0?'inline-flex':'none';
+  document.getElementById('excel-confirm-btn').style.display=newCount>0?'inline-flex':'none';
+  if(newCount===0) toast('ℹ Todos los reportes del Excel ya existen');
 }
 
 window.confirmExcelImport=async function(){
-  const validRows=_excelRows.filter(r=>!reportes.some(existItem=>existItem.nombre.toLowerCase()===r.nombre.toLowerCase()));
-  if(!validRows.length){toast('✅ No hay registros nuevos únicos');return;}
+  const toImport=_excelRows.filter(r=>r._isNew);
+  if(!toImport.length){toast('No hay nuevos reportes para importar');return;}
   let count=0;
-  for(const r of validRows){
+  for(const r of toImport){
+    // Match exactly the same structure as manually created items
     const item={
-      id:uid(), nombre:r.nombre, desc:r.tipo_reporte?`Importado vía Excel (${r.tipo_reporte})`:'',
-      estado:r.estado_excel?matchEstadoExcel(r.estado_excel):'no-iniciado',
-      fecha:r.fecha||null, responsable:members[0]||'', notes:'',
-      id_intervencion:r.id_intervencion||'', tipo_reporte:r.tipo_reporte||'', categoria:r.categoria||'',
-      implementador:r.implementador||'', region:r.region||'', gerente:r.gerente||''
+      id:uid(),
+      nombre:r.nombre||'',
+      desc:r.desc||'',
+      responsable:r.responsable||members[0]||'',  // default to first team member
+      tipo:r.tipo_reporte||'Individual',            // tipo used for interventions
+      tipo_reporte:r.tipo_reporte||'',
+      categoria:r.categoria||'',
+      id_intervencion:r.id_intervencion||'',
+      estado:r.estado_mapped||'no-iniciado',
+      fecha:r.fecha||'',
+      notas:r.notas||'',
+      implementador:r.implementador||'',
+      region:r.region||'',
+      gerente:r.gerente||'',
+      fecha_ins_sol:null,
+      fecha_ins_rec:null,
+      completedAt:null,
     };
-    if(item.estado===REP_FINAL) item.completedAt=Date.now();
     await saveItem('rep',item); count++;
   }
-  closeExcelImport(); toast(`📊 ¡Se importaron ${count} reportes exitosamente!`);
+  closeOv('ov-excel');
+  toast(`✅ ${count} reporte${count===1?'':'s'} importado${count===1?'':'s'}`,3500);
 };
 
+// ── BULK SELECTION ──
+let selRep=new Set(), selInt=new Set();
+
+function updateBulkBar(type){
+  const sel=type==='rep'?selRep:selInt;
+  const bar=document.getElementById('bulk-bar-'+type);
+  const cnt=document.getElementById('bulk-count-'+type);
+  if(sel.size>0){
+    bar.classList.add('visible');
+    cnt.textContent=`${sel.size} seleccionado${sel.size===1?'':'s'}`;
+  } else {
+    bar.classList.remove('visible');
+    // uncheck select-all
+    const cbAll=document.getElementById('cb-all-'+type);
+    if(cbAll) cbAll.checked=false;
+  }
+}
+
+window.onRowCb=function(type,id,checked){
+  const sel=type==='rep'?selRep:selInt;
+  checked ? sel.add(id) : sel.delete(id);
+  updateBulkBar(type);
+};
+
+window.toggleAllRep=function(cbEl){
+  selRep.clear();
+  if(cbEl.checked){
+    const items=getFiltered(reportes,'srch-rep','flt-er','flt-rr').filter(r=>si('rep',r.estado).key!=='aprobado-region');
+    items.forEach(r=>{ selRep.add(r.id); const cb=document.getElementById('cb-'+r.id); if(cb)cb.checked=true; });
+  } else {
+    document.querySelectorAll('.row-cb').forEach(cb=>cb.checked=false);
+  }
+  updateBulkBar('rep');
+};
+
+window.toggleAllInt=function(cbEl){
+  selInt.clear();
+  if(cbEl.checked){
+    const items=getFiltered(intervenciones,'srch-int','flt-ei','flt-ri');
+    items.forEach(r=>{ selInt.add(r.id); const cb=document.getElementById('cb-'+r.id); if(cb)cb.checked=true; });
+  } else {
+    document.querySelectorAll('.row-cb').forEach(cb=>cb.checked=false);
+  }
+  updateBulkBar('int');
+};
+
+window.selectAllRep=function(){
+  selRep.clear();
+  const items=getFiltered(reportes,'srch-rep','flt-er','flt-rr');
+  items.forEach(r=>{ selRep.add(r.id); const cb=document.getElementById('cb-'+r.id); if(cb)cb.checked=true; });
+  const cbAll=document.getElementById('cb-all-rep'); if(cbAll)cbAll.checked=true;
+  updateBulkBar('rep');
+};
+
+window.selectAllInt=function(){
+  selInt.clear();
+  const items=getFiltered(intervenciones,'srch-int','flt-ei','flt-ri');
+  items.forEach(r=>{ selInt.add(r.id); const cb=document.getElementById('cb-'+r.id); if(cb)cb.checked=true; });
+  const cbAll=document.getElementById('cb-all-int'); if(cbAll)cbAll.checked=true;
+  updateBulkBar('int');
+};
+
+window.clearSelRep=function(){
+  selRep.clear();
+  document.querySelectorAll('#pane-rep .row-cb').forEach(cb=>cb.checked=false);
+  const cbAll=document.getElementById('cb-all-rep'); if(cbAll)cbAll.checked=false;
+  updateBulkBar('rep');
+};
+
+window.clearSelInt=function(){
+  selInt.clear();
+  document.querySelectorAll('#pane-int .row-cb').forEach(cb=>cb.checked=false);
+  const cbAll=document.getElementById('cb-all-int'); if(cbAll)cbAll.checked=false;
+  updateBulkBar('int');
+};
+
+window.bulkDeleteRep=async function(){
+  if(!selRep.size)return;
+  if(!confirm(`¿Eliminar ${selRep.size} reporte${selRep.size===1?'':'s'}? Esta acción no se puede deshacer.`))return;
+  const ids=[...selRep];
+  selRep.clear();
+  updateBulkBar('rep');
+  for(const id of ids) await removeItem('rep',id);
+  toast(`🗑 ${ids.length} reporte${ids.length===1?'':'s'} eliminado${ids.length===1?'':'s'}`);
+};
+
+window.bulkDeleteInt=async function(){
+  if(!selInt.size)return;
+  if(!confirm(`¿Eliminar ${selInt.size} intervención${selInt.size===1?'':'es'}? Esta acción no se puede deshacer.`))return;
+  const ids=[...selInt];
+  selInt.clear();
+  updateBulkBar('int');
+  for(const id of ids) await removeItem('int',id);
+  toast(`🗑 ${ids.length} intervención${ids.length===1?'':'es'} eliminada${ids.length===1?'':'s'}`);
+};
+
+// ── FIREBASE DEBUG FOR IMPORT ──
 window.showFirebaseDebug=function(){
-  const sample=reportes.slice(0,3).map(r=>({ nombre: r.nombre, id_intervencion: r.id_intervencion||'(vacío)', tipo_reporte: r.tipo_reporte||'(vacío)' }));
-  document.getElementById('firebase-debug-content').textContent=JSON.stringify(sample,null,2); document.getElementById('firebase-debug').style.display='block';
+  const sample=reportes.slice(0,3).map(r=>({
+    nombre: r.nombre,
+    id_intervencion: r.id_intervencion||'(vacío)',
+    tipo_reporte: r.tipo_reporte||'(vacío)',
+  }));
+  document.getElementById('firebase-debug-content').textContent=JSON.stringify(sample,null,2);
+  document.getElementById('firebase-debug').style.display='block';
 };
 
+// ── FIX IMPORTED ITEMS (patch missing fields on existing records) ──
 window.fixImportedItems=async function(){
-  const toFix=reportes.filter(r=>!r.responsable); if(!toFix.length){toast('✅ Todo correcto');return;}
-  for(const r of toFix) await saveItem('rep',{...r,responsable:members[0]||''}); toast('🔧 Registros reparados');
+  const toFix=reportes.filter(r=>!r.responsable||r.responsable==='');
+  if(!toFix.length){toast('✅ No hay registros con datos faltantes');return;}
+  let count=0;
+  for(const r of toFix){
+    const fixed={
+      ...r,
+      responsable:members[0]||'',
+      desc:r.desc||'',
+      tipo:r.tipo||'Individual',
+      notas:r.notas||'',
+      implementador:r.implementador||'',
+      region:r.region||'',
+      gerente:r.gerente||'',
+      fecha_ins_sol:r.fecha_ins_sol||null,
+      fecha_ins_rec:r.fecha_ins_rec||null,
+      completedAt:r.completedAt||null,
+    };
+    await saveItem('rep',fixed); count++;
+  }
+  toast(`✅ ${count} registro${count===1?'':'s'} reparado${count===1?'':'s'}`);
 };
+
+// ── SORT SETTERS (exposed so HTML onchange can reach them) ──
+window.setSortRep=function(val){sortRep=val;renderRep();}
+window.setSortInt=function(val){sortInt=val;renderInt();}
+
+// ── EXPOSE ──
+window.renderRep=renderRep;
+window.renderRepDone=renderRepDone;
+window.renderInt=renderInt;
+
+// ── INIT ──
+populateSelects();
+startListeners();
 </script>
 </body>
 </html>
